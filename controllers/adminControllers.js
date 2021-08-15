@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 const User = require("../models/User");
-const Admin = require("./models/Admin");
+const Admin = require("../models/Admin");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
+//confirm user
 
 exports.confirmUser = async (req, res) => {
   const id = req.params.id;
@@ -29,6 +31,8 @@ exports.confirmUser = async (req, res) => {
   res.status(200).json({ message: "user confirmed successfully" });
 };
 
+//fetch confirmed members
+
 exports.FetchMembers = async (req, res) => {
   try {
     const users = await User.find(
@@ -44,11 +48,12 @@ exports.FetchMembers = async (req, res) => {
   }
 };
 
+//create moderators
 exports.CreateModerator = async (req, res) => {
   const { email, phone, password, fullname } = req.body;
+  const existingUser = await Admin.findOne({ email: email });
+  console.log(req.body);
   try {
-    const existingUser = await Admin.findOne({ email: email });
-
     if (existingUser) {
       return res.status(404).json({ message: "user already exist" });
     }
@@ -76,9 +81,8 @@ exports.CreateModerator = async (req, res) => {
 
 exports.AdminLogin = async (req, res) => {
   const { email, password } = req.body;
+  const existingUser = await Admin.findOne({ email: email });
   try {
-    const existingUser = await Admin.findOne({ email: email });
-
     if (!existingUser)
       return res.status(404).json({ message: "user does not exist" });
     const passwordCorrect = await bcrypt.compare(
