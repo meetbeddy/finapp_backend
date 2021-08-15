@@ -52,11 +52,10 @@ exports.FetchMembers = async (req, res) => {
 exports.CreateModerator = async (req, res) => {
   const { email, phone, password, fullname } = req.body;
 
-  console.log(req.body);
   try {
     const existingUser = await Admin.findOne({ email: email });
     if (existingUser) {
-      return res.status(404).json({ message: "user already exist" });
+      return res.json({ message: "user already exist" });
     }
 
     const hashedpassword = await bcrypt.hash(password, 12);
@@ -74,7 +73,6 @@ exports.CreateModerator = async (req, res) => {
 };
 
 exports.AdminLogin = async (req, res) => {
-  console.log(process.env);
   const { email, password } = req.body;
   const existingUser = await Admin.findOne({ email: email });
   try {
