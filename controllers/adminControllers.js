@@ -28,9 +28,12 @@ exports.confirmUser = async (req, res) => {
 
 exports.FetchUsers = async (req, res) => {
   try {
-    const users = await User.find({
-      confirmed: true,
-    });
+    const users = await User.find(
+      {
+        confirmed: true,
+      },
+      { _id: 0, name: 1, memberId: 1 }
+    );
 
     res.json(users);
   } catch (err) {
