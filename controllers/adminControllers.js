@@ -4,15 +4,19 @@ const User = require("../models/User");
 
 exports.confirmUser = async (req, res) => {
   const id = req.params.id;
-  const user = await User.find({
+  let user = await User.findOne({
     _id: id,
   });
 
   const lastUser = await User.find({ confirmed: true })
     .sort({ _id: -1 })
-    .limit(1);
+    .limit(1)
+    .then((products) => {
+      return products[0];
+    });
 
-  const lastUserMemberId = lastUser?.memberId?.slice(-6);
+  const lastUserMemberId =
+    lastUser != undefined ? lastUser.memberId.slice(-6) : "0";
 
   const memberId = generateMemberId(lastUserMemberId);
 
@@ -39,7 +43,12 @@ generateMemberId = (lastid) => {
   let todayDate = new Date();
   let month = todayDate.getMonth();
   let year = todayDate.getFullYear();
-  let sequence = parseInt(lastid);
-  let id = `LMCS/${month}/${year}/${sequence + 1}`;
+  let num = parseInt(lastid) + 1;
+
+  let sequence = num + "";
+  while (sequence.length < 6) sequence = "0" + sequence;
+
+  let id = `LMCS/${month}/${year}/${sequence}`;
+
   return id;
 };
