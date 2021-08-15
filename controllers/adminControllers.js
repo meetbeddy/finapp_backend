@@ -45,8 +45,7 @@ exports.FetchMembers = async (req, res) => {
 };
 
 exports.CreateModerator = async (req, res) => {
-
-  const {email,phone,password,fullname}
+  const { email, phone, password, fullname } = req.body;
   try {
     const existingUser = await Admin.findOne({ email: email });
 
@@ -69,38 +68,37 @@ exports.CreateModerator = async (req, res) => {
         expiresIn: "1h",
       }
     );
-    res.status(200).json({message:"successfully created admin" });
+    res.status(200).json({ message: "successfully created admin" });
   } catch (error) {
     res.status(500).json({ message: "something went wrong", error });
   }
 };
 
-exports.AdminLogin = async(req,res)=>{
+exports.AdminLogin = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const existingUser = await Admin.findOne({ email: email });
 
-  const {email,password}=req.body
-  try{
-    const existingUser = await Admin.findOne({email:email})
-
-    if (!existingUser)   return res.status(404).json({ message: "user does not exist" });
+    if (!existingUser)
+      return res.status(404).json({ message: "user does not exist" });
     const passwordCorrect = await bcrypt.compare(
       password,
       existingUser.password
     );
     if (!passwordCorrect)
       return res.status(400).json({ message: "incorrect password" });
-      const token = jwt.sign(
-        {
-          email: existingUser.email,
-          id: existingUser._id,
-        },
-        process.env.TOKEN_SECRET
-      );
-      res.status(200).json({ user: existingUser, token });
-
-  }catch(err){
+    const token = jwt.sign(
+      {
+        email: existingUser.email,
+        id: existingUser._id,
+      },
+      process.env.TOKEN_SECRET
+    );
+    res.status(200).json({ user: existingUser, token });
+  } catch (err) {
     res.status(500).json({ message: "something went wrong" });
   }
-}
+};
 //LMCS/month/year/sixdigitsequence
 generateMemberId = (lastid) => {
   let todayDate = new Date();
