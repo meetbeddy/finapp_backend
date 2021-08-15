@@ -145,8 +145,12 @@ savePaymentDetails = async (user, paymentDetails) => {
 };
 exports.getUser = async (req, res) => {
   const { id } = req.params;
-  let user = await User.findOne({
-    _id: id,
-  });
-  res.status(200).json({ user });
+  try {
+    let user = await User.findOne({
+      _id: id,
+    });
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(500).json({ message: "something went wrong", error });
+  }
 };

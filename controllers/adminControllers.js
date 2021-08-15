@@ -51,9 +51,10 @@ exports.FetchMembers = async (req, res) => {
 //create moderators
 exports.CreateModerator = async (req, res) => {
   const { email, phone, password, fullname } = req.body;
-  const existingUser = await Admin.findOne({ email: email });
+
   console.log(req.body);
   try {
+    const existingUser = await Admin.findOne({ email: email });
     if (existingUser) {
       return res.status(404).json({ message: "user already exist" });
     }
@@ -66,20 +67,14 @@ exports.CreateModerator = async (req, res) => {
       name: fullname,
     });
 
-    const token = jwt.sign(
-      { email: user.email, id: user._id },
-      process.env.TOKEN_SECRET,
-      {
-        expiresIn: "1h",
-      }
-    );
-    res.status(200).json({ message: "successfully created admin" });
+    res.status(200).json({ message: "successfully created admin", user });
   } catch (error) {
     res.status(500).json({ message: "something went wrong", error });
   }
 };
 
 exports.AdminLogin = async (req, res) => {
+  console.log(process.env);
   const { email, password } = req.body;
   const existingUser = await Admin.findOne({ email: email });
   try {
