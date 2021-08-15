@@ -8,7 +8,7 @@ env.config();
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "100mb", extended: true }));
 
 //database connect
 // const db = "mongodb://localhost:27017/finapp";

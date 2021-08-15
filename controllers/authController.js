@@ -9,8 +9,6 @@ const PaymentDetail = require("../models/PaymentDetail");
 exports.signIn = async (req, res) => {
   const { email, password } = req.body;
 
-  console.log(req.body);
-
   try {
     const existingUser = await User.findOne({ email: email });
 
@@ -26,9 +24,8 @@ exports.signIn = async (req, res) => {
       {
         email: existingUser.email,
         id: existingUser._id,
-        accessLevel: existingUser.accessLevel,
       },
-      "test"
+      process.env.TOKEN_SECRET
     );
     res.status(200).json({ user: existingUser, token });
   } catch (error) {
@@ -52,6 +49,8 @@ exports.signUp = async (req, res) => {
     rank,
     gradeLevel,
     step,
+    signature,
+    retirementDate,
   } = req.body;
 
   let paymentDetails = {
@@ -67,6 +66,7 @@ exports.signUp = async (req, res) => {
     rank,
     gradeLevel,
     step,
+    retirementDate,
   };
 
   try {
@@ -85,14 +85,19 @@ exports.signUp = async (req, res) => {
       phone,
       password: hashedpassword,
       name: fullname,
+      signature,
     });
 
     saveEmploymentDetails(user, employmentDetails);
     savePaymentDetails(user, paymentDetails);
 
-    const token = jwt.sign({ email: user.email, id: user._id }, "test", {
-      expiresIn: "2h",
-    });
+    const token = jwt.sign(
+      { email: user.email, id: user._id },
+      process.env.TOKEN_SECRET,
+      {
+        expiresIn: "2h",
+      }
+    );
     res.status(200).json({ user, token });
   } catch (error) {
     res.status(500).json({ message: "something went wrong", error });
@@ -108,6 +113,7 @@ saveEmploymentDetails = async (user, employmentDetails) => {
       rank: employmentDetails.rank,
       gradeLevel: employmentDetails.gradeLevel,
       step: employmentDetails.step,
+      retirementDate: employmentDetails.retirementDate,
     }).save();
 
     person.employmentDetails = details?._id;
@@ -136,4 +142,11 @@ savePaymentDetails = async (user, paymentDetails) => {
   } catch (err) {
     console.log(err);
   }
+};
+exports.getUser = async (req, res) => {
+  const { id } = req.params;
+  let user = await User.findOne({
+    _id: id,
+  });
+  res.status(200).json({ user });
 };

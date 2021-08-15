@@ -7,6 +7,7 @@ const EmploymentDetailSchema = new Schema({
   rank: { type: String, required: true },
   gradeLevel: { type: String, required: true },
   step: { type: String, required: true },
+  retirementDate: { type: String, required: true },
 });
 
 module.exports = mongoose.model("EmploymentDetail", EmploymentDetailSchema);
