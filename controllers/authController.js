@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const EmploymentDetail = require("../models/EmploymentDetail");
 const PaymentDetail = require("../models/PaymentDetail");
+const multer = require("../middleware/multer");
+const cloudinary = require("cloudinary");
 
 exports.signIn = async (req, res) => {
   const { email, password } = req.body;
@@ -33,44 +35,12 @@ exports.signIn = async (req, res) => {
   }
 };
 exports.signUp = async (req, res) => {
-  const {
-    fullname,
-    email,
-    password,
-    homeAddress,
-    phone,
-    confirmpassword,
-    tellername,
-    tellerRefNum,
-    paymentDate,
-    amount,
-    bankname,
-    organisationName,
-    rank,
-    gradeLevel,
-    step,
-    signature,
-    retirementDate,
-  } = req.body;
-
-  let paymentDetails = {
-    tellername,
-    tellerRefNum,
-    paymentDate,
-    amount,
-    bankname,
-  };
-
-  let employmentDetails = {
-    organisationName,
-    rank,
-    gradeLevel,
-    step,
-    retirementDate,
-  };
+  const { fullname, email, password, confirmpassword, homeAddress, phone } =
+    req.body;
 
   try {
     const existingUser = await User.findOne({ email: email });
+    let image = await handleUploads(req);
 
     if (existingUser) {
       return res.status(404).json({ message: "user already exist" });
@@ -85,11 +55,11 @@ exports.signUp = async (req, res) => {
       phone,
       password: hashedpassword,
       name: fullname,
-      signature,
+      signature: image.url,
     });
 
-    saveEmploymentDetails(user, employmentDetails);
-    savePaymentDetails(user, paymentDetails);
+    saveEmploymentDetails(user, req);
+    savePaymentDetails(user, req);
 
     const token = jwt.sign(
       { email: user.email, id: user._id },
@@ -100,20 +70,30 @@ exports.signUp = async (req, res) => {
     );
     res.status(200).json({ user, token });
   } catch (error) {
-    res.status(500).json({ message: "something went wrong", error });
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: error.message });
   }
 };
-
-saveEmploymentDetails = async (user, employmentDetails) => {
+handleUploads = async (req) => {
+  let image;
+  if (req.file) {
+    const file = multer.dataUri(req).content;
+    image = await cloudinary.uploader.upload(file);
+  }
+  return image;
+};
+saveEmploymentDetails = async (user, req) => {
+  const { organisationName, rank, gradeLevel, step, retirementDate } = req.body;
   let person = await User.findOne({ _id: user._id }).select("-password");
 
   try {
     details = await new EmploymentDetail({
-      organisationName: employmentDetails.organisationName,
-      rank: employmentDetails.rank,
-      gradeLevel: employmentDetails.gradeLevel,
-      step: employmentDetails.step,
-      retirementDate: employmentDetails.retirementDate,
+      organisationName,
+      rank,
+      gradeLevel,
+      step,
+      retirementDate,
     }).save();
 
     person.employmentDetails = details?._id;
@@ -123,9 +103,8 @@ saveEmploymentDetails = async (user, employmentDetails) => {
   }
 };
 
-savePaymentDetails = async (user, paymentDetails) => {
-  const { tellername, tellerRefNum, paymentDate, amount, bankname } =
-    paymentDetails;
+savePaymentDetails = async (user, req) => {
+  const { tellername, tellerRefNum, paymentDate, amount, bankname } = req.body;
   let person = await User.findOne({ _id: user._id }).select("-password");
 
   try {

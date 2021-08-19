@@ -1,14 +1,24 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const { resolve } = require("path");
+const cloudinaryConfig = require("./configs/cloudinaryConfig").cloudConfig;
+
+// const multer = require("multer");
+// const uploads = multer({ dest: "uploads/" });
+
 const user = require("./routes/api/user");
 const admin = require("./routes/api/admin");
+
 const env = require("dotenv");
 env.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(resolve(__dirname, "src/public")));
+app.use("*", cloudinaryConfig);
 
 //database connect
 // const db = "mongodb://localhost:27017/finapp";

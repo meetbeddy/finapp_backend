@@ -54,6 +54,7 @@ exports.CreateModerator = async (req, res) => {
 
   try {
     const existingUser = await Admin.findOne({ email: email });
+    console.log(existingUser);
     if (existingUser) {
       return res.json({ message: "user already exist" });
     }
