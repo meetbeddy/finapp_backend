@@ -4,9 +4,6 @@ const cors = require("cors");
 const { resolve } = require("path");
 const cloudinaryConfig = require("./configs/cloudinaryConfig").cloudConfig;
 
-// const multer = require("multer");
-// const uploads = multer({ dest: "uploads/" });
-
 const user = require("./routes/api/user");
 const admin = require("./routes/api/admin");
 

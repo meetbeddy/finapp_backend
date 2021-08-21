@@ -8,6 +8,8 @@ const EmploymentDetailSchema = new Schema({
   gradeLevel: { type: String, required: true },
   step: { type: String, required: true },
   retirementDate: { type: String, required: true },
+  ippisNum: { type: String, required: true },
+  campusName: { type: String, required: true },
 });
 
 module.exports = mongoose.model("EmploymentDetail", EmploymentDetailSchema);

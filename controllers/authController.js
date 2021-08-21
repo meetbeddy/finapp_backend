@@ -34,9 +34,18 @@ exports.signIn = async (req, res) => {
     res.status(500).json({ message: "something went wrong" });
   }
 };
+
+//signup
 exports.signUp = async (req, res) => {
-  const { fullname, email, password, confirmpassword, homeAddress, phone } =
-    req.body;
+  const {
+    fullname,
+    email,
+    password,
+    confirmpassword,
+    homeAddress,
+    phone,
+    birthDate,
+  } = req.body;
 
   try {
     const existingUser = await User.findOne({ email: email });
@@ -56,6 +65,7 @@ exports.signUp = async (req, res) => {
       password: hashedpassword,
       name: fullname,
       signature: image.url,
+      birthDate,
     });
 
     saveEmploymentDetails(user, req);
@@ -84,7 +94,15 @@ handleUploads = async (req) => {
   return image;
 };
 saveEmploymentDetails = async (user, req) => {
-  const { organisationName, rank, gradeLevel, step, retirementDate } = req.body;
+  const {
+    organisationName,
+    rank,
+    gradeLevel,
+    step,
+    retirementDate,
+    ippisNum,
+    campusName,
+  } = req.body;
   let person = await User.findOne({ _id: user._id }).select("-password");
 
   try {
@@ -94,6 +112,8 @@ saveEmploymentDetails = async (user, req) => {
       gradeLevel,
       step,
       retirementDate,
+      ippisNum,
+      campusName,
     }).save();
 
     person.employmentDetails = details?._id;
