@@ -1,4 +1,4 @@
-const DOMAIN = "sandboxecfadec977634c0f96a3a476c4119e66.mailgun.org";
+const DOMAIN = "lmcsnigltd.org.ng";
 module.exports = () => {
   const emailConfig = {
     apiKey: process.env.MAILGUN_API_KEY,

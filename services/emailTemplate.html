@@ -1,14 +1,77 @@
-const emailConfig = require("../configs/mailgunConfig")();
-const mailgun = require("mailgun-js")(emailConfig);
+<!DOCTYPE html>
+<html
+  style="
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
+    font-size: 14px;
+    margin: 0;
+  "
+>
+  <head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>please confirm your email account</title>
+    <style type="text/css">
+      img {
+        max-width: 100%;
+      }
+      body {
+        -webkit-font-smoothing: antialiased;
+        -webkit-text-size-adjust: none;
+        width: 100% !important;
+        height: 100%;
+        line-height: 1.6em;
+      }
+      body {
+        background-color: #f6f6f6;
+      }
+      @media only screen and (max-width: 640px) {
+        body {
+          padding: 0 !important;
+        }
+        h1 {
+          font-weight: 800 !important;
+          margin: 20px 0 5px !important;
+        }
+        h2 {
+          font-weight: 800 !important;
+          margin: 20px 0 5px !important;
+        }
+        h3 {
+          font-weight: 800 !important;
+          margin: 20px 0 5px !important;
+        }
+        h4 {
+          font-weight: 800 !important;
+          margin: 20px 0 5px !important;
+        }
+        h1 {
+          font-size: 22px !important;
+        }
+        h2 {
+          font-size: 18px !important;
+        }
+        h3 {
+          font-size: 16px !important;
+        }
+        .container {
+          padding: 0 !important;
+          width: 100% !important;
+        }
+        .content {
+          padding: 0 !important;
+        }
+        .content-wrap {
+          padding: 10px !important;
+        }
+        .invoice {
+          width: 100% !important;
+        }
+      }
+    </style>
+  </head>
 
-exports.emailConfirmation = (recipient, name, token) => {
-  const url = `https://stark-depths-01637.herokuapp.com/user/emailconfirmation/${token}`;
-
-  const data = {
-    from: "LMCS Nig. Ltd. <noreply@lmcsnigltd.org.ng>",
-    to: recipient,
-    subject: "Verify your email address",
-    html: `<body
+  <body
     itemscope
     itemtype="http://schema.org/EmailMessage"
     style="
@@ -191,7 +254,7 @@ exports.emailConfirmation = (recipient, name, token) => {
                             font-size: 14px;
                             margin: 0;
                           "
-                          > ${name}</strong
+                          >{{name}}</strong
                         >.
                       </td>
                     </tr>
@@ -244,7 +307,7 @@ exports.emailConfirmation = (recipient, name, token) => {
                         valign="top"
                       >
                         <a
-                          href=${url}
+                          href="{{url}}"
                           class="btn-primary"
                           style="
                             font-family: 'Helvetica Neue', Helvetica, Arial,
@@ -378,13 +441,4 @@ exports.emailConfirmation = (recipient, name, token) => {
       </tr>
     </table>
   </body>
-      `,
-  };
-
-  mailgun.messages().send(data, (error, body) => {
-    if (error) {
-      return error;
-    }
-    console.log(body);
-  });
-};
+</html>

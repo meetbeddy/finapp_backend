@@ -7,7 +7,7 @@ const auth = require("../../middleware/Auth");
 router.post("/API/signin", authController.signIn);
 router.post("/API/signup", multerUploads, authController.signUp);
 router.get("/getuser/:id", auth, authController.getUser);
-router.get("./emailconfirmation/:confirmtionCode", authController.verifyEmail);
+router.get("/emailconfirmation/:confirmationcode", authController.verifyEmail);
 
 // router.post("/updateprofile", authController.updateUserProfile);
 
