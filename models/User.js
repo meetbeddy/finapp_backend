@@ -14,6 +14,13 @@ const userSchema = new Schema({
   memberId: { type: String, default: "pending approval" },
   paymentDetails: { type: Schema.Types.ObjectId, ref: "PaymentDetail" },
   employmentDetails: { type: Schema.Types.ObjectId, ref: "EmploymentDetail" },
+  category: { type: String, required: true },
+  emailStatus: {
+    type: String,
+    enum: ["pending", "active"],
+    default: "pending",
+  },
+  confirmationCode: { type: String, unique: true },
   createdAt: {
     type: Date,
     default: new Date(),

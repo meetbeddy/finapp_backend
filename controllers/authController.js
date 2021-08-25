@@ -7,6 +7,7 @@ const EmploymentDetail = require("../models/EmploymentDetail");
 const PaymentDetail = require("../models/PaymentDetail");
 const multer = require("../middleware/multer");
 const cloudinary = require("cloudinary");
+const sendEmail = require("../services/mailgun").emailConfirmation;
 
 exports.signIn = async (req, res) => {
   const { email, password } = req.body;
@@ -45,6 +46,7 @@ exports.signUp = async (req, res) => {
     homeAddress,
     phone,
     birthDate,
+    category,
   } = req.body;
 
   try {
@@ -58,6 +60,10 @@ exports.signUp = async (req, res) => {
       return res.status(404).json({ message: "password doesn't match" });
     }
     const hashedpassword = await bcrypt.hash(password, 12);
+
+    const token = jwt.sign({ email: email }, process.env.TOKEN_SECRET, {
+      expiresIn: "2h",
+    });
     const user = await User.create({
       email,
       homeAddress,
@@ -66,18 +72,13 @@ exports.signUp = async (req, res) => {
       name: fullname,
       signature: image.url,
       birthDate,
+      category,
+      confirmationCode: token,
     });
 
     saveEmploymentDetails(user, req);
     savePaymentDetails(user, req);
-
-    const token = jwt.sign(
-      { email: user.email, id: user._id },
-      process.env.TOKEN_SECRET,
-      {
-        expiresIn: "2h",
-      }
-    );
+    sendEmail(email, fullname, token);
     res.status(200).json({ user, token });
   } catch (error) {
     res
@@ -102,6 +103,8 @@ saveEmploymentDetails = async (user, req) => {
     retirementDate,
     ippisNum,
     campusName,
+    salaryStructure,
+    faculty,
   } = req.body;
   let person = await User.findOne({ _id: user._id }).select("-password");
 
@@ -114,6 +117,8 @@ saveEmploymentDetails = async (user, req) => {
       retirementDate,
       ippisNum,
       campusName,
+      salaryStructure,
+      faculty,
     }).save();
 
     person.employmentDetails = details?._id;
@@ -153,4 +158,22 @@ exports.getUser = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "something went wrong", error });
   }
+};
+
+exports.verifyEmail = async (req, res) => {
+  const confirmationCode = req.params.confirmationCode;
+  try {
+    const user = User.findOne({
+      confirmationCode: confirmationCode,
+    });
+
+    if (!user) return res.status(404).json({ message: "user not found" });
+    user.status = "active";
+    user.save((err) => {
+      if (err) {
+        res.status(500).send({ message: err });
+        return;
+      }
+    });
+  } catch (err) {}
 };
