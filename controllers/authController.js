@@ -169,8 +169,9 @@ exports.verifyEmail = async (req, res) => {
       confirmationCode: confirmationCode,
     });
 
+    console.log(user);
     if (!user) return res.status(404).json({ message: "user not found" });
-    user.status = "active";
+    user.emailStatus = "active";
     user.save();
     res.sendFile(path.join(__dirname + "../static/emailconfirm.html"));
   } catch (err) {
