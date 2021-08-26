@@ -165,16 +165,27 @@ exports.verifyEmail = async (req, res) => {
   const confirmationCode = req.params.confirmationcode;
 
   try {
-    const user = User.findOne({
+    const user = await User.findOne({
       confirmationCode: confirmationCode,
     });
 
-    console.log(user);
-    if (!user) return res.status(404).json({ message: "user not found" });
+    if (!user)
+      return res
+        .status(404)
+        .send({ message: "user not found or you are already confirmed" });
     user.emailStatus = "active";
+    user.confirmationCode = undefined;
     user.save();
-    res.sendFile(path.join(__dirname + "../static/emailconfirm.html"));
+    res.sendFile(
+      "emailconfirm.html",
+      { root: path.join(__dirname, "../public") },
+      function (err) {
+        if (err) {
+          console.log(err);
+        }
+      }
+    );
   } catch (err) {
-    res.status(500).send({ message: err });
+    res.status(500).json(err);
   }
 };

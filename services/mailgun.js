@@ -2,7 +2,7 @@ const emailConfig = require("../configs/mailgunConfig")();
 const mailgun = require("mailgun-js")(emailConfig);
 
 exports.emailConfirmation = (recipient, name, token) => {
-  const url = `https://stark-depths-01637.herokuapp.com/user/emailconfirmation/${token}`;
+  const url = `localhost:5000/user/emailconfirmation/${token}`;
 
   const data = {
     from: "LMCS Nig. Ltd. <noreply@lmcsnigltd.org.ng>",
@@ -266,7 +266,7 @@ exports.emailConfirmation = (recipient, name, token) => {
                             border-style: solid;
                             border-width: 10px 20px;
                           "
-                          >confirm email</a
+                          ><button>confirm email</button></a
                         >
                       </td>
                     </tr>

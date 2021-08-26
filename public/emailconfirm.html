@@ -10,7 +10,7 @@
         margin-top: 200px;
       }
       .card {
-        width: auto;
+        width: 50%;
         height: auto;
         border: 2px solid silver;
         box-shadow: 10px 10px 5px #aaaaaa;
@@ -33,6 +33,11 @@
         height: 6.5rem;
         font-size: 1.6em !important;
         margin: 20px 0 20px !important;
+      }
+      @media only screen and (max-width: 640px) {
+        .card {
+          width: 100%;
+        }
       }
     </style>
     <link
