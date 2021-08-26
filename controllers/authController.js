@@ -8,6 +8,7 @@ const PaymentDetail = require("../models/PaymentDetail");
 const multer = require("../middleware/multer");
 const cloudinary = require("cloudinary");
 const sendEmail = require("../services/mailgun").emailConfirmation;
+const path = require("path");
 
 exports.signIn = async (req, res) => {
   const { email, password } = req.body;
@@ -162,6 +163,7 @@ exports.getUser = async (req, res) => {
 
 exports.verifyEmail = async (req, res) => {
   const confirmationCode = req.params.confirmationcode;
+
   try {
     const user = User.findOne({
       confirmationCode: confirmationCode,
@@ -169,14 +171,9 @@ exports.verifyEmail = async (req, res) => {
 
     if (!user) return res.status(404).json({ message: "user not found" });
     user.status = "active";
-    res.json({ success: "your email has been confirmed" });
-    res.redirect("https://lmcsnigltd.org.ng/#/");
-
-    user.save((err) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
-    });
-  } catch (err) {}
+    user.save();
+    res.sendFile(path.join(__dirname + "../static/emailconfirm.html"));
+  } catch (err) {
+    res.status(500).send({ message: err });
+  }
 };

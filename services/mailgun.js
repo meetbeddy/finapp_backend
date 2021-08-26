@@ -383,6 +383,7 @@ exports.emailConfirmation = (recipient, name, token) => {
 
   mailgun.messages().send(data, (error, body) => {
     if (error) {
+      console.log(error);
       return error;
     }
     console.log(body);

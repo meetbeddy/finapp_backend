@@ -1,8 +1,8 @@
-const DOMAIN = "lmcsnigltd.org.ng";
+require("dotenv").config();
 module.exports = () => {
   const emailConfig = {
     apiKey: process.env.MAILGUN_API_KEY,
-    domain: DOMAIN,
+    domain: process.env.DOMAIN,
   };
   return emailConfig;
 };
