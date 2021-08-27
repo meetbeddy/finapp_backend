@@ -10,6 +10,10 @@ const cloudinary = require("cloudinary");
 const sendEmail = require("../services/mailgun").emailConfirmation;
 const path = require("path");
 
+/*@route POST 
+ @desc sign in for user
+ @access public*/
+
 exports.signIn = async (req, res) => {
   const { email, password } = req.body;
 
@@ -37,7 +41,10 @@ exports.signIn = async (req, res) => {
   }
 };
 
-//signup
+/*@route POST 
+ @desc sign up for user
+ @access public*/
+
 exports.signUp = async (req, res) => {
   const {
     fullname,
@@ -148,6 +155,11 @@ savePaymentDetails = async (user, req) => {
     console.log(err);
   }
 };
+
+/*@route GET 
+ @desc get user profile
+ @access private*/
+
 exports.getUser = async (req, res) => {
   const id = req.params.id;
   try {
@@ -160,6 +172,10 @@ exports.getUser = async (req, res) => {
     res.status(500).json({ message: "something went wrong", error });
   }
 };
+
+/*@route GET 
+ @desc email verification
+ @access public*/
 
 exports.verifyEmail = async (req, res) => {
   const confirmationCode = req.params.confirmationcode;

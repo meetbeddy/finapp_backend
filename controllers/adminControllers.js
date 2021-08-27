@@ -4,8 +4,11 @@ const User = require("../models/User");
 const Admin = require("../models/Admin");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const sendEmail = require("../services/mailgun").memberConfirmation;
 
-//confirm user
+/*@route POST 
+ @desc confirm user
+ @access private*/
 
 exports.confirmUser = async (req, res) => {
   const id = req.params.id;
@@ -13,11 +16,12 @@ exports.confirmUser = async (req, res) => {
     _id: id,
   });
 
+  //find last confirmed user
   const lastUser = await User.find({ confirmed: true })
     .sort({ _id: -1 })
     .limit(1)
-    .then((products) => {
-      return products[0];
+    .then((person) => {
+      return person[0];
     });
 
   const lastUserMemberId =
@@ -28,10 +32,13 @@ exports.confirmUser = async (req, res) => {
   user.confirmed = true;
   user.memberId = memberId;
   user.save();
+  sendEmail(user.email, user.name, memberId);
   res.status(200).json({ message: "user confirmed successfully" });
 };
 
-//fetch confirmed members
+/*@route GET 
+ @desc get confirmed user
+ @access public*/
 
 exports.FetchMembers = async (req, res) => {
   try {
@@ -39,7 +46,7 @@ exports.FetchMembers = async (req, res) => {
       {
         confirmed: true,
       },
-      { _id: 0, name: 1, memberId: 1 }
+      { _id: 0, name: 1, memberId: 1, email: 1, phone: 1, birthDate: 1 }
     );
 
     res.json(users);
@@ -48,13 +55,15 @@ exports.FetchMembers = async (req, res) => {
   }
 };
 
-//create moderators
+/*@route POST 
+ @desc Admin Creation
+ @access private*/
 exports.CreateModerator = async (req, res) => {
   const { email, phone, password, fullname } = req.body;
 
   try {
     const existingUser = await Admin.findOne({ email: email });
-    console.log(existingUser);
+
     if (existingUser) {
       return res.json({ message: "user already exist" });
     }
@@ -73,6 +82,9 @@ exports.CreateModerator = async (req, res) => {
   }
 };
 
+/*@route POST 
+ @desc login for admins
+ @access public*/
 exports.AdminLogin = async (req, res) => {
   const { email, password } = req.body;
   const existingUser = await Admin.findOne({ email: email });
@@ -97,6 +109,7 @@ exports.AdminLogin = async (req, res) => {
     res.status(500).json({ message: "something went wrong" });
   }
 };
+
 //LMCS/month/year/sixdigitsequence
 generateMemberId = (lastid) => {
   let todayDate = new Date();
