@@ -55,6 +55,28 @@ exports.FetchMembers = async (req, res) => {
   }
 };
 
+/*@route GET 
+ @desc get all users
+ @access private*/
+
+exports.FetchAllUsers = async (req, res) => {
+  try {
+    const users = await User.find()
+      .populate({
+        path: "paymentDetails",
+        model: "PaymentDetail",
+      })
+      .populate({
+        path: "employmentDetails",
+        model: "EmploymentDetail",
+      });
+
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: "something went wrong" });
+  }
+};
+
 /*@route POST 
  @desc Admin Creation
  @access private*/
@@ -113,7 +135,7 @@ exports.AdminLogin = async (req, res) => {
 //LMCS/month/year/sixdigitsequence
 generateMemberId = (lastid) => {
   let todayDate = new Date();
-  let month = todayDate.getMonth();
+  let month = todayDate.getMonth() + 1;
   let year = todayDate.getFullYear();
   let num = parseInt(lastid) + 1;
 
