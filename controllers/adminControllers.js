@@ -12,28 +12,40 @@ const sendEmail = require("../services/mailgun").memberConfirmation;
 
 exports.confirmUser = async (req, res) => {
   const id = req.params.id;
-  let user = await User.findOne({
-    _id: id,
-  });
 
-  //find last confirmed user
-  const lastUser = await User.find({ confirmed: true })
-    .sort({ _id: -1 })
-    .limit(1)
-    .then((person) => {
-      return person[0];
+  try {
+    if (!req.user.accessLevel)
+      return res
+        .status(401)
+        .json({
+          message: "you dont have the permission to carry out this action",
+        });
+
+    let user = await User.findOne({
+      _id: id,
     });
 
-  const lastUserMemberId =
-    lastUser != undefined ? lastUser.memberId.slice(-6) : "0";
+    //find last confirmed user
+    const lastUser = await User.find({ confirmed: true })
+      .sort({ _id: -1 })
+      .limit(1)
+      .then((person) => {
+        return person[0];
+      });
 
-  const memberId = generateMemberId(lastUserMemberId);
+    const lastUserMemberId =
+      lastUser != undefined ? lastUser.memberId.slice(-6) : "0";
 
-  user.confirmed = true;
-  user.memberId = memberId;
-  user.save();
-  sendEmail(user.email, user.name, memberId);
-  res.status(200).json({ message: "user confirmed successfully" });
+    const memberId = generateMemberId(lastUserMemberId);
+
+    user.confirmed = true;
+    user.memberId = memberId;
+    user.save();
+    sendEmail(user.email, user.name, memberId);
+    res.status(200).json({ message: "user confirmed successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "something went wrong", error: err.msg });
+  }
 };
 
 /*@route GET 
@@ -56,6 +68,22 @@ exports.FetchMembers = async (req, res) => {
 };
 
 /*@route GET 
+ @desc get admin
+ @access private*/
+
+exports.getAdmin = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const user = await Admin.findOne({ _id: id });
+    res.json(user);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+/*@route GET 
  @desc get all users
  @access private*/
 
@@ -73,7 +101,9 @@ exports.FetchAllUsers = async (req, res) => {
 
     res.json(users);
   } catch (err) {
-    res.status(500).json({ message: "something went wrong" });
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
   }
 };
 
@@ -84,6 +114,12 @@ exports.CreateModerator = async (req, res) => {
   const { email, phone, password, fullname } = req.body;
 
   try {
+    if (req.user.accessLevel < 3)
+      return res
+        .status(401)
+        .json({
+          message: "you dont have the permission to carry out this action",
+        });
     const existingUser = await Admin.findOne({ email: email });
 
     if (existingUser) {
@@ -123,6 +159,7 @@ exports.AdminLogin = async (req, res) => {
       {
         email: existingUser.email,
         id: existingUser._id,
+        accessLevel: existingUser.accessLevel,
       },
       process.env.TOKEN_SECRET
     );

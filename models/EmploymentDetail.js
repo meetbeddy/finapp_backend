@@ -12,6 +12,7 @@ const EmploymentDetailSchema = new Schema({
   campusName: { type: String, required: true },
   salaryStructure: String,
   faculty: String,
+  department: String,
 });
 
 module.exports = mongoose.model("EmploymentDetail", EmploymentDetailSchema);

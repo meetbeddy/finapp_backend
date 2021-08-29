@@ -113,6 +113,7 @@ saveEmploymentDetails = async (user, req) => {
     campusName,
     salaryStructure,
     faculty,
+    department,
   } = req.body;
   let person = await User.findOne({ _id: user._id }).select("-password");
 
@@ -127,6 +128,7 @@ saveEmploymentDetails = async (user, req) => {
       campusName,
       salaryStructure,
       faculty,
+      department,
     }).save();
 
     person.employmentDetails = details?._id;
@@ -211,6 +213,20 @@ exports.verifyEmail = async (req, res) => {
         }
       }
     );
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+};
+
+exports.sendEmailConfirmation = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const user = await User.findById(id);
+
+    if (user.emailStatus === "active")
+      return res.status(400).send("user email is already is already confirmed");
+    sendEmail(user.email, user.name, user.confirmationCode);
   } catch (err) {
     res.status(500).json({ err: err.message });
   }
