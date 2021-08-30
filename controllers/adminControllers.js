@@ -5,6 +5,7 @@ const Admin = require("../models/Admin");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../services/mailgun").memberConfirmation;
+const sendInvite = require("../services/mailgun").adminInvite;
 
 /*@route POST 
  @desc confirm user
@@ -15,11 +16,9 @@ exports.confirmUser = async (req, res) => {
 
   try {
     if (!req.user.accessLevel)
-      return res
-        .status(401)
-        .json({
-          message: "you dont have the permission to carry out this action",
-        });
+      return res.status(401).json({
+        message: "you dont have the permission to carry out this action",
+      });
 
     let user = await User.findOne({
       _id: id,
@@ -115,11 +114,9 @@ exports.CreateModerator = async (req, res) => {
 
   try {
     if (req.user.accessLevel < 3)
-      return res
-        .status(401)
-        .json({
-          message: "you dont have the permission to carry out this action",
-        });
+      return res.status(401).json({
+        message: "you dont have the permission to carry out this action",
+      });
     const existingUser = await Admin.findOne({ email: email });
 
     if (existingUser) {
@@ -133,7 +130,7 @@ exports.CreateModerator = async (req, res) => {
       password: hashedpassword,
       name: fullname,
     });
-
+    adminInvite(email, fullname, password);
     res.status(200).json({ message: "successfully created admin", user });
   } catch (error) {
     res.status(500).json({ message: "something went wrong", error });
