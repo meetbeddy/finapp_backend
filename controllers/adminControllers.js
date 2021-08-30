@@ -38,6 +38,7 @@ exports.confirmUser = async (req, res) => {
     const memberId = generateMemberId(lastUserMemberId);
 
     user.confirmed = true;
+    user.confirmedBy = req.user.name;
     user.memberId = memberId;
     user.save();
     sendEmail(user.email, user.name, memberId);
@@ -154,6 +155,7 @@ exports.AdminLogin = async (req, res) => {
       return res.status(400).json({ message: "incorrect password" });
     const token = jwt.sign(
       {
+        name: existingUser.name,
         email: existingUser.email,
         id: existingUser._id,
         accessLevel: existingUser.accessLevel,

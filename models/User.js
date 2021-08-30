@@ -12,6 +12,7 @@ const userSchema = new Schema({
   signature: { type: String, required: true },
   birthDate: { type: String, required: true },
   memberId: { type: String, default: "pending approval" },
+  confirmedBy: String,
   paymentDetails: {
     type: Schema.Types.ObjectId,
     ref: "PaymentDetail",
