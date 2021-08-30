@@ -59,7 +59,7 @@ exports.signUp = async (req, res) => {
 
   try {
     const existingUser = await User.findOne({ email: email });
-    let image = await handleUploads(req);
+    let images = await handleUploads(req);
 
     if (existingUser) {
       return res.status(404).json({ message: "user already exist" });
@@ -78,7 +78,8 @@ exports.signUp = async (req, res) => {
       phone,
       password: hashedpassword,
       name: fullname,
-      signature: image.url,
+      signature: images.signature.url,
+      passport: images.passport.url,
       birthDate,
       category,
       confirmationCode: token,
@@ -95,12 +96,21 @@ exports.signUp = async (req, res) => {
   }
 };
 handleUploads = async (req) => {
-  let image;
-  if (req.file) {
-    const file = multer.dataUri(req).content;
-    image = await cloudinary.uploader.upload(file);
+  let passport;
+  let signature;
+
+  let file1 = req.files.passport[0];
+  let file2 = req.files.signature[0];
+  if (req.files) {
+    const pass = multer.dataUri(file1).content;
+    const sign = multer.dataUri(file2).content;
+    passport = await cloudinary.uploader.upload(pass);
+    signature = await cloudinary.uploader.upload(sign);
   }
-  return image;
+  return {
+    passport,
+    signature,
+  };
 };
 saveEmploymentDetails = async (user, req) => {
   const {
@@ -114,6 +124,8 @@ saveEmploymentDetails = async (user, req) => {
     salaryStructure,
     faculty,
     department,
+    assumptionOfdutyDate,
+    staffNum,
   } = req.body;
   let person = await User.findOne({ _id: user._id }).select("-password");
 
@@ -129,6 +141,8 @@ saveEmploymentDetails = async (user, req) => {
       salaryStructure,
       faculty,
       department,
+      assumptionOfdutyDate,
+      staffNum,
     }).save();
 
     person.employmentDetails = details?._id;

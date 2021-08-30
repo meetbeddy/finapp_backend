@@ -651,7 +651,7 @@ exports.memberConfirmation = (recipient, name, memberid) => {
                               "
                               class="em_w150"
                             />
-                            LMCS NIGERIA LIMITED</a
+                            LION MULTI-PURPOSE COOPERATIVE SOCIETY NIGERIA LIMITED</a
                           >
                         </td>
                       </tr>

@@ -5,8 +5,11 @@ const DatauriParser = require("datauri/parser");
 const path = require("path");
 
 const storage = multer.memoryStorage();
-exports.multerUploads = multer({ storage }).single("image");
+exports.multerUploads = multer({ storage }).fields([
+  { name: "signature", maxCount: 1 },
+  { name: "passport", maxCount: 1 },
+]);
 
 const dUri = new DatauriParser();
 exports.dataUri = (req) =>
-  dUri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
+  dUri.format(path.extname(req.originalname).toString(), req.buffer);

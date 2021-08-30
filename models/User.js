@@ -12,9 +12,16 @@ const userSchema = new Schema({
   signature: { type: String, required: true },
   birthDate: { type: String, required: true },
   memberId: { type: String, default: "pending approval" },
-  paymentDetails: { type: Schema.Types.ObjectId, ref: "PaymentDetail" },
-  employmentDetails: { type: Schema.Types.ObjectId, ref: "EmploymentDetail" },
+  paymentDetails: {
+    type: Schema.Types.ObjectId,
+    ref: "PaymentDetail",
+  },
+  employmentDetails: {
+    type: Schema.Types.ObjectId,
+    ref: "EmploymentDetail",
+  },
   category: { type: String, required: true },
+  passport: { type: String, required: true },
   emailStatus: {
     type: String,
     enum: ["pending", "active"],

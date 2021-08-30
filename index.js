@@ -22,7 +22,11 @@ app.use("*", cloudinaryConfig);
 const db = process.env.DB_URI;
 
 mongoose
-  .connect(db, { useUnifiedTopology: true, useNewUrlParser: true })
+  .connect(db, {
+    useCreateIndex: true,
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+  })
   .then(() => console.log("db connected"))
   .catch((err) => console.log(err));
 
