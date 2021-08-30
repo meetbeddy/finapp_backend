@@ -24,6 +24,8 @@ exports.confirmUser = async (req, res) => {
       _id: id,
     });
 
+    if (user.confirmed)
+      return res.status(400).json({ message: "user is already confirmed" });
     //find last confirmed user
     const lastUser = await User.find({ confirmed: true })
       .sort({ _id: -1 })
