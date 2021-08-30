@@ -73,11 +73,11 @@ exports.signUp = async (req, res) => {
       expiresIn: "2h",
     });
     const user = await User.create({
+      name: fullname,
       email,
       homeAddress,
       phone,
       password: hashedpassword,
-      name: fullname,
       signature: images.signature.url,
       passport: images.passport.url,
       birthDate,
