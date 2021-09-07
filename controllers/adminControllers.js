@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const sendEmail = require("../services/mailgun").memberConfirmation;
 const sendInvite = require("../services/mailgun").adminInvite;
 
-/*@route POST 
+/*@route GET 
  @desc confirm user
  @access private*/
 
