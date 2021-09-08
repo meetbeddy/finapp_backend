@@ -21,6 +21,10 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "EmploymentDetail",
   },
+  initialSavingsRequest: {
+    type: Schema.Types.ObjectId,
+    ref: "InitialSaving",
+  },
   category: { type: String, required: true },
   passport: { type: String, required: true },
   emailStatus: {
