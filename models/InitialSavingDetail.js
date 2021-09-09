@@ -3,10 +3,10 @@ mongoose.Promise = global.Promise;
 const { Schema } = mongoose;
 
 const InitialSavingSchema = new Schema({
-  ordinarySavingsAmount: { type: String, required: true },
-  ordinarySavingsMonths: { type: String, required: true },
-  shareCapitalAmount: { type: String, required: true },
-  shareCapitalMonths: { type: String, required: true },
+  ordinarySavingsAmount: String,
+  ordinarySavingsMonths: String,
+  shareCapitalAmount: String,
+  shareCapitalMonths: String,
   christmasSavingsAmount: String,
   christmasSavingsMonths: String,
   educationSavingsAmount: String,
