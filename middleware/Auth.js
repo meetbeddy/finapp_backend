@@ -4,7 +4,6 @@ env.config();
 
 const auth = (req, res, next) => {
   const token = req.header("x-auth-token");
-  console.log(req.header("Authorisation"));
 
   if (!token) res.status(401).json({ message: "No token, Not Authourised" });
   try {

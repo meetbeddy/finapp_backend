@@ -55,6 +55,8 @@ exports.signUp = async (req, res) => {
     phone,
     birthDate,
     category,
+    title,
+    gender,
   } = req.body;
 
   try {
@@ -82,6 +84,8 @@ exports.signUp = async (req, res) => {
       passport: images.passport.url,
       birthDate,
       category,
+      title,
+      gender,
       confirmationCode: token,
     });
 
