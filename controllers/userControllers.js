@@ -24,7 +24,7 @@ exports.initialSavings = async (req, res) => {
       initialSavingRequest = await InitialSaving.findById(
         user.initialSavingsRequest
       );
-      initialSavingRequest.inchristmasSavingsAmount = christmasSavingsAmount;
+      initialSavingRequest.christmasSavingsAmount = christmasSavingsAmount;
       initialSavingRequest.christmasSavingsMonths = christmasSavingsMonths;
       initialSavingRequest.educationSavingsAmount = educationSavingsAmount;
       initialSavingRequest.educationSavingsMonths = educationSavingsMonths;
