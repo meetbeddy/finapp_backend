@@ -15,29 +15,31 @@ exports.initialSavings = async (req, res) => {
     retirementSavingsMonths,
     shareCapitalAmount,
     shareCapitalMonths,
-  } = req.body;
+  } = req.body.formdata;
   try {
     const user = await User.findOne({ _id: req.user.id });
 
     let initialSavingRequest;
     if (user.initialSavingsRequest) {
       const update = {
-        christmasSavingsAmount,
-        christmasSavingsMonths,
-        educationSavingsAmount,
-        educationSavingsMonths,
-        ordinarySavingsAmount,
-        ordinarySavingsMonths,
-        retirementSavingsAmount,
-        retirementSavingsMonths,
-        shareCapitalAmount,
-        shareCapitalMonths,
+        christmasSavingsAmount: christmasSavingsAmount,
+        christmasSavingsMonths: christmasSavingsMonths,
+        educationSavingsAmount: educationSavingsAmount,
+        educationSavingsMonths: educationSavingsMonths,
+        ordinarySavingsAmount: ordinarySavingsAmount,
+        ordinarySavingsMonths: ordinarySavingsMonths,
+        retirementSavingsAmount: retirementSavingsAmount,
+        retirementSavingsMonths: retirementSavingsMonths,
+        shareCapitalAmount: shareCapitalAmount,
+        shareCapitalMonths: shareCapitalMonths,
       };
+
+      const filter = { _id: user.initialSavingsRequest };
       initialSavingRequest = await InitialSavingDetail.findOneAndUpdate(
-        user.initialSavingsRequest,
-        update
+        filter,
+        update,
+        { new: true }
       );
-      return;
     } else {
       initialSavingRequest = await new InitialSavingDetail({
         christmasSavingsAmount,

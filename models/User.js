@@ -5,14 +5,14 @@ const { Schema } = mongoose;
 const userSchema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
-  title: { type: String, required: true },
+  title: String,
   homeAddress: { type: String, required: true },
   phone: { type: String, required: true },
   password: { type: String, required: true },
   confirmed: { type: Boolean, default: false },
   signature: { type: String, required: true },
   birthDate: { type: String, required: true },
-  gender: { type: String, required: true },
+  gender: String,
   memberId: { type: String, default: "pending approval" },
   confirmedBy: String,
   paymentDetails: {
