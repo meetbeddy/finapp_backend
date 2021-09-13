@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 const User = require("../models/User");
-const InitialSaving = require("../models/InitialSavingDetail");
+const InitialSavingDetail = require("../models/InitialSavingDetail");
 
 exports.initialSavings = async (req, res) => {
   const {
@@ -21,32 +21,35 @@ exports.initialSavings = async (req, res) => {
 
     let initialSavingRequest;
     if (user.initialSavingsRequest) {
-      initialSavingRequest = await InitialSaving.findById(
-        user.initialSavingsRequest
+      const update = {
+        christmasSavingsAmount,
+        christmasSavingsMonths,
+        educationSavingsAmount,
+        educationSavingsMonths,
+        ordinarySavingsAmount,
+        ordinarySavingsMonths,
+        retirementSavingsAmount,
+        retirementSavingsMonths,
+        shareCapitalAmount,
+        shareCapitalMonths,
+      };
+      initialSavingRequest = await InitialSavingDetail.findOneAndUpdate(
+        user.initialSavingsRequest,
+        update
       );
-      initialSavingRequest.christmasSavingsAmount = christmasSavingsAmount;
-      initialSavingRequest.christmasSavingsMonths = christmasSavingsMonths;
-      initialSavingRequest.educationSavingsAmount = educationSavingsAmount;
-      initialSavingRequest.educationSavingsMonths = educationSavingsMonths;
-      initialSavingRequest.ordinarySavingsAmount = ordinarySavingsAmount;
-      initialSavingRequest.ordinarySavingsMonths = ordinarySavingsMonths;
-      initialSavingRequest.retirementSavingsAmount = retirementSavingsAmount;
-      initialSavingRequest.retirementSavingsMonths = retirementSavingsMonths;
-      initialSavingRequest.shareCapitalAmount = shareCapitalAmount;
-      initialSavingRequest.shareCapitalMonths = shareCapitalMonths;
-      initialSavingRequest.save();
+      return;
     } else {
-      initialSavingRequest = await new InitialSaving({
-        christmasSavingsAmount: christmasSavingsAmount,
-        christmasSavingsMonths: christmasSavingsMonths,
-        educationSavingsAmount: educationSavingsAmount,
-        educationSavingsMonths: educationSavingsMonths,
-        ordinarySavingsAmount: ordinarySavingsAmount,
-        ordinarySavingsMonths: ordinarySavingsMonths,
-        retirementSavingsAmount: retirementSavingsAmount,
-        retirementSavingsMonths: retirementSavingsMonths,
-        shareCapitalAmount: shareCapitalAmount,
-        shareCapitalMonths: shareCapitalMonths,
+      initialSavingRequest = await new InitialSavingDetail({
+        christmasSavingsAmount,
+        christmasSavingsMonths,
+        educationSavingsAmount,
+        educationSavingsMonths,
+        ordinarySavingsAmount,
+        ordinarySavingsMonths,
+        retirementSavingsAmount,
+        retirementSavingsMonths,
+        shareCapitalAmount,
+        shareCapitalMonths,
       }).save();
     }
 
