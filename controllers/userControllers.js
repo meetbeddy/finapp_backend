@@ -20,8 +20,7 @@ exports.initialSavings = async (req, res) => {
     const user = await User.findOne({ _id: req.user.id });
 
     let initialSavingRequest;
-    if (("one", user.initialSavingsRequest)) {
-      console.log(user.initialSavingsRequest);
+    if (user.initialSavingsRequest) {
       initialSavingRequest = await InitialSaving.findById(
         user.initialSavingsRequest
       );
@@ -50,9 +49,9 @@ exports.initialSavings = async (req, res) => {
         shareCapitalMonths: shareCapitalMonths,
       }).save();
     }
-    console.log(initialSavingRequest);
+
     user.initialSavingsRequest = initialSavingRequest._id;
-    console.log("two", user);
+
     user.save();
     res.status(200).json({ message: "successfully sent " });
   } catch (err) {

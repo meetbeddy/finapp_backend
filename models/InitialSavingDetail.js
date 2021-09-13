@@ -13,6 +13,11 @@ const InitialSavingSchema = new Schema({
   educationSavingsMonths: String,
   retirementSavingsAmount: String,
   retirementSavingsMonths: String,
+  acknowledged: {
+    type: String,
+    enum: ["pending", "active"],
+    default: "pending",
+  },
 });
 
 module.exports = mongoose.model("InitialSaving", InitialSavingSchema);

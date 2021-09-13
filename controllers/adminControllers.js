@@ -5,6 +5,7 @@ const Admin = require("../models/Admin");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../services/mailgun").memberConfirmation;
+const InitialSaving = require("../models/InitialSavingDetail");
 const sendInvite = require("../services/mailgun").adminInvite;
 
 /*@route GET 
@@ -95,6 +96,10 @@ exports.FetchAllUsers = async (req, res) => {
       .populate({
         path: "paymentDetails",
         model: "PaymentDetail",
+      })
+      .populate({
+        path: "initialSavingsRequest",
+        model: "InitialSaving",
       })
       .populate({
         path: "employmentDetails",
