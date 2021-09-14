@@ -62,7 +62,11 @@ exports.FetchMembers = async (req, res) => {
         confirmed: true,
       },
       { _id: 0, name: 1, memberId: 1, email: 1, phone: 1, birthDate: 1 }
-    );
+    ).populate({
+      path: "paymentDetails",
+      model: "PaymentDetail",
+      _id: 0,
+    });
 
     res.json(users);
   } catch (err) {
@@ -138,10 +142,12 @@ exports.CreateModerator = async (req, res) => {
       password: hashedpassword,
       name: fullname,
     });
-    adminInvite(email, fullname, password);
+    sendInvite(email, fullname, password);
     res.status(200).json({ message: "successfully created admin", user });
   } catch (error) {
-    res.status(500).json({ message: "something went wrong", error });
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: error.message });
   }
 };
 
@@ -175,6 +181,31 @@ exports.AdminLogin = async (req, res) => {
   }
 };
 
+exports.acknowledgeReciept = async (req, res) => {
+  const { userData } = req.body;
+  try {
+  } catch (err) {
+    const filter = { _id: userData.initialSavingsRequest._id };
+    const update = { acknowledged: "seen" };
+    await InitialSaving.findOneAndUpdate(filter, update, { new: true });
+
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+exports.declineReciept = async (req, res) => {
+  const { userData } = req.body;
+  try {
+    const filter = { _id: userData.initialSavingsRequest._id };
+    const update = { acknowledged: "declined" };
+    await InitialSaving.findOneAndUpdate(filter, update, { new: true });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
 //LMCS/month/year/sixdigitsequence
 generateMemberId = (lastid) => {
   let todayDate = new Date();

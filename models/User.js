@@ -31,7 +31,7 @@ const userSchema = new Schema({
   passport: { type: String, required: true },
   emailStatus: {
     type: String,
-    enum: ["pending", "active"],
+    enum: ["pending", "active", "declined"],
     default: "pending",
   },
   confirmationCode: { type: String, unique: true },

@@ -15,8 +15,12 @@ const InitialSavingSchema = new Schema({
   retirementSavingsMonths: String,
   acknowledged: {
     type: String,
-    enum: ["pending", "active"],
+    enum: ["pending", "seen", "declined"],
     default: "pending",
+  },
+  requestedAt: {
+    type: Date,
+    default: new Date(),
   },
 });
 

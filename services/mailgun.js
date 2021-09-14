@@ -1477,8 +1477,13 @@ exports.memberConfirmation = (recipient, name, memberid) => {
                         >
                           hello, ${name} your registration is successful and your membership id is
                           ${memberid},<br />
-                          you can now access your dashboard.
+
                         </td>
+                         <tr>
+                <td class="em_grey" align="center" valign="top" style="font-family: Arial, sans-serif; font-size: 16px; line-height: 26px; color:#434343;">
+                Login to your dashboard, click on Savings and share capital to give us initial instruction in respect of your monthly savings and share capital contribution from your salary.<br />
+</td>
+              </tr>
                       </tr>
                       <tr>
                         <td height="26" style="height: 26px" class="em_h20">
@@ -1514,7 +1519,7 @@ exports.memberConfirmation = (recipient, name, memberid) => {
                                 "
                               >
                                 <a
-                                  href="https://lmcsnigltd.org.ng/#/"
+                                  href="https://lmcsnigltd.org.ng/signin/"
                                   target="_blank"
                                   style="
                                     text-decoration: none;
