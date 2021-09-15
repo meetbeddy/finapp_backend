@@ -9,11 +9,11 @@ router.post("/API/login", adminController.AdminLogin);
 router.get("/API/getmembers", adminController.FetchMembers);
 router.get("/API/getallusers", auth, adminController.FetchAllUsers);
 router.get("/API/getadmin/:id", auth, adminController.getAdmin);
-router.get(
-  "/API/acknowledgereciept/:id",
+router.post(
+  "/API/acknowledgereciept",
   auth,
   adminController.acknowledgeReciept
 );
-router.get("/API/declinereciept/:id", auth, adminController.declineReciept);
+router.post("/API/declinereciept", auth, adminController.declineReciept);
 
 module.exports = router;
