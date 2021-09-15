@@ -15,11 +15,13 @@ exports.initialSavings = async (req, res) => {
     retirementSavingsMonths,
     shareCapitalAmount,
     shareCapitalMonths,
-  } = req.body.formdata;
-  try {
-    const user = await User.findOne({ _id: req.user.id });
+  } = req.body.formData;
 
+  try {
+    const user = await User.findOne({ email: req.user.email });
+    console.log(user.initialSavingsRequest);
     let initialSavingRequest;
+
     if (user.initialSavingsRequest) {
       const update = {
         christmasSavingsAmount: christmasSavingsAmount,
