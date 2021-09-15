@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const sendEmail = require("../services/mailgun").memberConfirmation;
 const InitialSaving = require("../models/InitialSavingDetail");
 const sendInvite = require("../services/mailgun").adminInvite;
+const sendReciept = require("../services/mailgun").recieptAcknowledgement;
 
 /*@route GET 
  @desc confirm user
@@ -188,7 +189,13 @@ exports.acknowledgeReciept = async (req, res) => {
     const filter = { _id: userData.initialSavingsRequest._id };
     const update = { acknowledged: "seen" };
     await InitialSaving.findOneAndUpdate(filter, update, { new: true });
-
+    sendReciept(
+      userData.email,
+      userData.name,
+      userData.initialSavingsRequest,
+      userData.memberId
+    );
+    res.status(200).json({ message: "successful" });
     res
       .status(500)
       .json({ message: "something went wrong", error: err.message });
@@ -200,6 +207,7 @@ exports.declineReciept = async (req, res) => {
     const filter = { _id: userData.initialSavingsRequest._id };
     const update = { acknowledged: "declined" };
     await InitialSaving.findOneAndUpdate(filter, update, { new: true });
+    res.status(200).json({ message: "successfully declined" });
   } catch (err) {
     res
       .status(500)
