@@ -15,11 +15,11 @@ exports.initialSavings = async (req, res) => {
     retirementSavingsMonths,
     shareCapitalAmount,
     shareCapitalMonths,
-  } = req.body.formData;
+  } = req.body.formdata;
 
   try {
     const user = await User.findOne({ email: req.user.email });
-    console.log(user.initialSavingsRequest);
+
     let initialSavingRequest;
 
     if (user.initialSavingsRequest) {
