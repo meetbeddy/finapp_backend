@@ -2237,7 +2237,7 @@ exports.memberConfirmation = (recipient, name, memberid) => {
                          <tr>
                 <td class="em_grey" align="center" valign="top" style="font-family: Arial, sans-serif; font-size: 16px; line-height: 26px; color:#434343;">
                 Login to your dashboard, click on Savings and share capital to give us initial instruction in respect of your monthly savings and share capital contribution from your salary.<br />
-</td>
+                </td>
               </tr>
                       </tr>
                       <tr>

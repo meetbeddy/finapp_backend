@@ -182,20 +182,24 @@ exports.AdminLogin = async (req, res) => {
   }
 };
 
+/*@route POST 
+ @desc initial instruction receipt acknowledgement
+ @access private*/
 exports.acknowledgeReciept = async (req, res) => {
-  const { userData } = req.body;
+  const { userdata } = req.body;
+
   try {
-  } catch (err) {
-    const filter = { _id: userData.initialSavingsRequest._id };
+    const filter = { _id: userdata.initialSavingsRequest._id };
     const update = { acknowledged: "seen" };
     await InitialSaving.findOneAndUpdate(filter, update, { new: true });
     sendReciept(
-      userData.email,
-      userData.name,
-      userData.initialSavingsRequest,
-      userData.memberId
+      userdata.email,
+      userdata.name,
+      userdata.initialSavingsRequest,
+      userdata.memberId
     );
     res.status(200).json({ message: "successful" });
+  } catch (err) {
     res
       .status(500)
       .json({ message: "something went wrong", error: err.message });
