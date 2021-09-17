@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 const { Schema } = mongoose;
+const { USER_LEVEL } = require("../constants/accessLevel");
 
 const userSchema = new Schema({
   name: { type: String, required: true },
@@ -14,6 +15,10 @@ const userSchema = new Schema({
   birthDate: { type: String, required: true },
   gender: String,
   memberId: { type: String, default: "pending approval" },
+  accessLevel: {
+    type: Number,
+    default: USER_LEVEL,
+  },
   confirmedBy: String,
   paymentDetails: {
     type: Schema.Types.ObjectId,
