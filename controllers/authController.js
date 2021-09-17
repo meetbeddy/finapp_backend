@@ -31,7 +31,7 @@ exports.signIn = async (req, res) => {
     const token = jwt.sign(
       {
         email: existingUser.email,
-        id: existingUser._id,
+        accessLevel: existingUser.accessLevel,
       },
       process.env.TOKEN_SECRET
     );
@@ -71,9 +71,13 @@ exports.signUp = async (req, res) => {
     }
     const hashedpassword = await bcrypt.hash(password, 12);
 
-    const token = jwt.sign({ email: email }, process.env.TOKEN_SECRET, {
-      expiresIn: "2h",
-    });
+    const token = jwt.sign(
+      { email: email, accessLevel: 1 },
+      process.env.TOKEN_SECRET,
+      {
+        expiresIn: "2h",
+      }
+    );
     const user = await User.create({
       name: fullname,
       email,
