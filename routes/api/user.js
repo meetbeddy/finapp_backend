@@ -7,10 +7,13 @@ const auth = require("../../middleware/Auth");
 
 router.post("/API/signin", authController.signIn);
 router.post("/API/signup", multerUploads, authController.signUp);
+router.post("/API/forgotpassword", authController.forgotPassword);
 router.get("/getuser/:id", auth, authController.getUser);
 router.post("/API/initialsaving", auth, userControllers.initialSavings);
 router.get("./sendemailconfirmation/:id", authController.sendEmailConfirmation);
 router.get("/emailconfirmation/:confirmationcode", authController.verifyEmail);
+router.get("/API/checklink/:token", authController.checkResetLink);
+router.post("/API/resetpassword", authController.resetPassword);
 
 // router.post("/updateprofile", authController.updateUserProfile);
 

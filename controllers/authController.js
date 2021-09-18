@@ -5,10 +5,13 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const EmploymentDetail = require("../models/EmploymentDetail");
 const PaymentDetail = require("../models/PaymentDetail");
+const Token = require("../models/Token");
 const multer = require("../middleware/multer");
 const cloudinary = require("cloudinary");
 const sendEmail = require("../services/mailgun").emailConfirmation;
+const sendResetLink = require("../services/mailgun").passwordResetLink;
 const path = require("path");
+const crypto = require("crypto");
 
 /*@route POST 
  @desc sign in for user
@@ -251,5 +254,70 @@ exports.sendEmailConfirmation = async (req, res) => {
     sendEmail(user.email, user.name, user.confirmationCode);
   } catch (err) {
     res.status(500).json({ err: err.message });
+  }
+};
+
+exports.forgotPassword = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+      return res.status(400).json({
+        message: `we couldnt find a user with this email -${req.body.email}`,
+      });
+    }
+
+    let token = await Token.findOne({ userId: user._Id });
+
+    if (!token) {
+      token = await new Token({
+        userId: user._id,
+        resetPasswordToken: crypto.randomBytes(20).toString("hex"),
+      }).save();
+    }
+
+    const link = `http://localhost:3000/emailreset/?token=${token.resetPasswordToken}&id=${user._id}&email=${req.body.email}`;
+    sendResetLink(user.email, link);
+    return res.status(200).json({
+      message: `a link has been sent to your email -${req.body.email}`,
+    });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+};
+
+exports.checkResetLink = async (req, res) => {
+  try {
+    let token = await Token.findOne({ resetPasswordToken: req.params.token });
+
+    if (!token) {
+      return res.status(400).json({
+        message: "link expired or invalid",
+      });
+    }
+    res.status(200).json({ message: "valid" });
+  } catch (err) {
+    res.status(500).json({ err: err.message });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.body.id });
+
+    if (!user) return res.status(404).json({ message: "user does not exist" });
+
+    if (req.body.password !== req.body.confirmpassword) {
+      return res.status(404).json({ message: "password doesn't match" });
+    }
+    const hashedpassword = await bcrypt.hash(req.body.password, 12);
+
+    user.password = hashedpassword;
+    user.save();
+    return res.status(200).json({ message: "password changed successfully" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
   }
 };

@@ -5,7 +5,7 @@ const { USER_LEVEL } = require("../constants/accessLevel");
 
 const userSchema = new Schema({
   name: { type: String, required: true },
-  email: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   title: String,
   homeAddress: { type: String, required: true },
   phone: { type: String, required: true },
