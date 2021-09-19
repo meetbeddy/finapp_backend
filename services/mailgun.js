@@ -5,7 +5,7 @@ exports.recieptAcknowledgement = (recipient, name, detail, memberid) => {
   const data = {
     from: "LMCS Nig. Ltd. <noreply@lmcsnigltd.org.ng>",
     to: recipient,
-    subject: "Verify your email address",
+    subject: "Instruction Recieved",
     html: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html
       xmlns="http://www.w3.org/1999/xhtml"
@@ -363,7 +363,7 @@ exports.recieptAcknowledgement = (recipient, name, detail, memberid) => {
                             color: #434343;
                           "
                         >
-                        hello, ${username}(${memberid}) your instruction has been received:<br />
+                        hello, ${name}(${memberid}) your instruction has been received:<br />
                          
                         </td>
                         <table width="100%" cellpadding="0" cellspacing="0" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0; border:1;"><tr style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; margin: 0;"><td class="content-block" style="font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; vertical-align: top; margin: 0; padding: 0 0 20px;" valign="top">
