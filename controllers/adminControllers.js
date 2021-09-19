@@ -206,7 +206,7 @@ exports.acknowledgeReciept = async (req, res) => {
   }
 };
 exports.declineReciept = async (req, res) => {
-  const { userData } = req.body;
+  const { userdata } = req.body;
   try {
     const filter = { _id: userData.initialSavingsRequest._id };
     const update = { acknowledged: "declined" };

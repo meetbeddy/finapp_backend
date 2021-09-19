@@ -34,6 +34,7 @@ exports.initialSavings = async (req, res) => {
         retirementSavingsMonths: retirementSavingsMonths,
         shareCapitalAmount: shareCapitalAmount,
         shareCapitalMonths: shareCapitalMonths,
+        acknowledged: "pending",
       };
 
       const filter = { _id: user.initialSavingsRequest };
