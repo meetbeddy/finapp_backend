@@ -63,11 +63,7 @@ exports.FetchMembers = async (req, res) => {
         confirmed: true,
       },
       { _id: 0, name: 1, memberId: 1, email: 1, phone: 1, birthDate: 1 }
-    ).populate({
-      path: "paymentDetails",
-      model: "PaymentDetail",
-      _id: 0,
-    });
+    );
 
     res.json(users);
   } catch (err) {
