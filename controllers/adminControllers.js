@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 const User = require("../models/User");
 const Admin = require("../models/Admin");
+const LastMemberId = require("../models/LastMemberId");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../services/mailgun").memberConfirmation;
@@ -28,27 +29,32 @@ exports.confirmUser = async (req, res) => {
 
     if (user.confirmed)
       return res.status(400).json({ message: "user is already confirmed" });
-    //find last confirmed user
-    const lastUser = await User.find({ confirmed: true })
-      .sort({ _id: -1 })
-      .limit(1)
-      .then((person) => {
-        return person[0];
-      });
 
-    const lastUserMemberId =
-      lastUser != undefined ? lastUser.memberId.slice(-6) : "0";
+    let recentId = await LastMemberId.findOne();
 
-    const memberId = generateMemberId(lastUserMemberId);
+    if (!recentId) {
+      recentId = await new LastMemberId({
+        userId: user._id,
+      }).save();
+    }
 
+    const generatedMemberId = await generateMemberId(recentId.memberId);
+
+    const lastGeneratedMemberId = generatedMemberId.slice(-6);
+
+    recentId.memberId = lastGeneratedMemberId;
+    recentId.userId = user._id;
+    recentId.save();
     user.confirmed = true;
     user.confirmedBy = req.user.name;
-    user.memberId = memberId;
+    user.memberId = generatedMemberId;
     user.save();
     sendEmail(user.email, user.name, memberId);
     res.status(200).json({ message: "user confirmed successfully" });
   } catch (err) {
-    res.status(500).json({ message: "something went wrong", error: err.msg });
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
   }
 };
 
