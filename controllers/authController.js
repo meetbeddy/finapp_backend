@@ -276,7 +276,7 @@ exports.forgotPassword = async (req, res) => {
       }).save();
     }
 
-    const link = `http://localhost:3000/emailreset/?token=${token.resetPasswordToken}&id=${user._id}&email=${req.body.email}`;
+    const link = `https://stark-depths-01637.herokuapp.com/emailreset/?token=${token.resetPasswordToken}&id=${user._id}&email=${req.body.email}`;
     sendResetLink(user.email, link);
     return res.status(200).json({
       message: `a link has been sent to your email -${req.body.email}`,
