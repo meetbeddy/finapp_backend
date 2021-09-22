@@ -49,7 +49,7 @@ exports.confirmUser = async (req, res) => {
     user.confirmedBy = req.user.name;
     user.memberId = generatedMemberId;
     user.save();
-    sendEmail(user.email, user.name, memberId);
+    sendEmail(user.email, user.name, user.memberId);
     res.status(200).json({ message: "user confirmed successfully" });
   } catch (err) {
     res
@@ -210,7 +210,7 @@ exports.acknowledgeReciept = async (req, res) => {
 exports.declineReciept = async (req, res) => {
   const { userdata } = req.body;
   try {
-    const filter = { _id: userData.initialSavingsRequest._id };
+    const filter = { _id: userddata.initialSavingsRequest._id };
     const update = { acknowledged: "declined" };
     await InitialSaving.findOneAndUpdate(filter, update, { new: true });
     res.status(200).json({ message: "successfully declined" });
