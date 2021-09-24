@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../../controllers/adminControllers");
+const authController = require("../../controllers/authController");
 const auth = require("../../middleware/Auth");
+const multerUploads = require("../../middleware/multer").multerUploads;
 
 router.get("/API/confirm/:id", auth, adminController.confirmUser);
 router.post("/API/createadmin", auth, adminController.CreateModerator);
@@ -15,5 +17,10 @@ router.post(
   adminController.acknowledgeReciept
 );
 router.post("/API/declinereciept", auth, adminController.declineReciept);
+router.post(
+  "/API/updateprofile",
+  multerUploads,
+  authController.updateUserProfile
+);
 
 module.exports = router;

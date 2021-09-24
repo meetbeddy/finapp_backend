@@ -321,3 +321,69 @@ exports.resetPassword = async (req, res) => {
       .json({ message: "something went wrong", error: err.message });
   }
 };
+
+exports.updateUserProfile = async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.body.id });
+    const employmentDetails = await EmploymentDetail.findOne({
+      _id: user.employmentDetails,
+    });
+    if (req.files?.passport) {
+      const pass = multer.dataUri(req.files.passport[0]).content;
+      let passport = await cloudinary.uploader.upload(pass);
+      user.passport = passport.url;
+    }
+    if (req.files?.signature) {
+      const sign = multer.dataUri(req.files.signature[0]).content;
+      let signature = await cloudinary.uploader.upload(sign);
+      user.signature = signature.url;
+    }
+
+    if (req.body.name !== user.name) user.name = req.body.name;
+    if (req.body.email !== user.email) user.email = req.body.email;
+    if (req.body.title !== user.title) user.title = req.body.title;
+    if (req.body.homeAddress !== user.homeAddress)
+      user.homeAddress = req.body.homeAddress;
+    if (req.body.birthDate !== user.birthDate)
+      user.birthDate = req.body.birthDate;
+    if (req.body.gender !== user.gender) user.gender = req.body.gender;
+    if (req.body.category !== user.category) user.category = req.body.category;
+    if (req.body.phone !== user.phone) user.phone = req.body.phone;
+
+    if (req.body.organisationName !== employmentDetails.organisationName)
+      employmentDetails.organisationName = req.body.organisationName;
+    if (req.body.rank !== employmentDetails.rank)
+      employmentDetails.rank = req.body.rank;
+    if (req.body.gradeLevel !== employmentDetails.gradeLevel)
+      employmentDetails.gradeLevel = req.body.gradeLevel;
+    if (req.body.step !== employmentDetails.step)
+      employmentDetails.step = req.body.step;
+    if (req.body.retirementDate !== employmentDetails.retirementDate)
+      employmentDetails.retirementDate = req.body.retirementDate;
+    if (req.body.campusName !== employmentDetails.campusName)
+      employmentDetails.campusName = req.body.campusName;
+    if (
+      req.body.assumptionOfdutyDate !== employmentDetails.assumptionOfdutyDate
+    )
+      employmentDetails.assumptionOfdutyDate = req.body.assumptionOfdutyDate;
+    if (req.body.ippisNum !== employmentDetails.ippisNum)
+      employmentDetails.ippisNum = req.body.ippisNum;
+    if (req.body.salaryStructure !== employmentDetails.salaryStructure)
+      employmentDetails.salaryStructure = req.body.salaryStructure;
+    if (req.body.faculty !== employmentDetails.faculty)
+      employmentDetails.faculty = req.body.faculty;
+    if (req.body.department !== employmentDetails.department)
+      employmentDetails.department = req.body.department;
+    if (req.body.staffNum !== employmentDetails.staffNum)
+      employmentDetails.staffNum = req.body.staffNum;
+
+    user.save();
+    employmentDetails.save();
+
+    res.status(200).json({ message: "profile updated successfully" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
