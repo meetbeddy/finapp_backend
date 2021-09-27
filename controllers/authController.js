@@ -194,8 +194,8 @@ exports.getUser = async (req, res) => {
       _id: id,
     })
       .populate({
-        path: "paymentDetails",
-        model: "PaymentDetail",
+        path: "initialSavingsRequest",
+        model: "InitialSaving",
       })
       .populate({
         path: "employmentDetails",
