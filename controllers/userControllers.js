@@ -4,7 +4,52 @@ const User = require("../models/User");
 const InitialSavingDetail = require("../models/InitialSavingDetail");
 const IncreaseSavingDetail = require("../models/IncreaseSavingDetail");
 const DecreaseSavingDetail = require("../models/DecreaseSavingDetail");
+const Referal = require("../models/Referal");
+const { findOne } = require("../models/User");
 
+exports.generateReferalink = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.user.email });
+
+    const memberId = user.memberId.slice(-6);
+    const name = user.name?.split(" ")[0];
+
+    const referal = await Referal.findOne({ userId: user._Id });
+
+    if (!referal) {
+      referal = await new Referal({
+        userId: user._id,
+        referedUsers: "",
+        username: `${name}-${memberId}`,
+      }).save();
+    }
+
+    const link = `https://lmcsnigltd.org.ng/signup/?ref=${referal.username}`;
+    res.status(200).json({ link });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+exports.getReferer = async (req, res) => {
+  const username = req.params.ref;
+
+  try {
+    const referal = await Referal.findOne({ username: username });
+    if (!referal) {
+      return res.status(401).json({ message: "invalid code" });
+    }
+
+    const user = await User.findOne({ _id: referal.userId });
+
+    res.status(200).json({ user });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
 exports.initialSavings = async (req, res) => {
   const {
     christmasSavingsAmount,

@@ -10,6 +10,7 @@ const multer = require("../middleware/multer");
 const cloudinary = require("cloudinary");
 const sendEmail = require("../services/mailgun").emailConfirmation;
 const sendResetLink = require("../services/mailgun").passwordResetLink;
+const Referal = require("../models/Referal");
 const path = require("path");
 const crypto = require("crypto");
 
@@ -60,6 +61,7 @@ exports.signUp = async (req, res) => {
     category,
     title,
     gender,
+    refererId,
   } = req.body;
 
   try {
@@ -95,7 +97,9 @@ exports.signUp = async (req, res) => {
       gender,
       confirmationCode: token,
     });
-
+    if (refererId) {
+      handleReferer(req, user);
+    }
     saveEmploymentDetails(user, req);
     savePaymentDetails(user, req);
     sendEmail(email, fullname, token);
@@ -105,6 +109,16 @@ exports.signUp = async (req, res) => {
       .status(500)
       .json({ message: "something went wrong", error: error.message });
   }
+};
+handleReferer = async (req, newuser) => {
+  const id = newuser._id;
+
+  const referal = await Referal.findOne({ userId: req.body.referalId });
+  const referedUser = referal.referedUsers;
+
+  referedUser.push(id);
+  referal.referedUsers = referedUser;
+  referal.save();
 };
 handleUploads = async (req) => {
   let passport;
@@ -276,7 +290,7 @@ exports.forgotPassword = async (req, res) => {
       }).save();
     }
 
-    const link = `https://stark-depths-01637.herokuapp.com/emailreset/?token=${token.resetPasswordToken}&id=${user._id}&email=${req.body.email}`;
+    const link = `https://lmcsnigltd.org.ng/emailreset/?token=${token.resetPasswordToken}&id=${user._id}&email=${req.body.email}`;
     sendResetLink(user.email, link);
     return res.status(200).json({
       message: `a link has been sent to your email -${req.body.email}`,
