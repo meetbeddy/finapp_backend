@@ -3,6 +3,8 @@ mongoose.Promise = global.Promise;
 const User = require("../models/User");
 const Admin = require("../models/Admin");
 const LastMemberId = require("../models/LastMemberId");
+const IncreaseSavingDetail = require("../models/IncreaseSavingDetail");
+const DecreaseSavingDetail = require("../models/DecreaseSavingDetail");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../services/mailgun").memberConfirmation;
@@ -109,6 +111,14 @@ exports.FetchAllUsers = async (req, res) => {
         model: "InitialSaving",
       })
       .populate({
+        path: "increaseSavingsRequest",
+        model: "IncreaseSaving",
+      })
+      .populate({
+        path: "decreaseSavingsRequest",
+        model: "DecreaseSaving",
+      })
+      .populate({
         path: "employmentDetails",
         model: "EmploymentDetail",
       });
@@ -207,6 +217,7 @@ exports.acknowledgeReciept = async (req, res) => {
       .json({ message: "something went wrong", error: err.message });
   }
 };
+
 exports.declineReciept = async (req, res) => {
   const { userdata } = req.body;
   try {
@@ -214,6 +225,60 @@ exports.declineReciept = async (req, res) => {
     const update = { acknowledged: "declined" };
     await InitialSaving.findOneAndUpdate(filter, update, { new: true });
     res.status(200).json({ message: "successfully declined" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+/*@route POST 
+ @desc increase instruction receipt acknowledgement
+ @access private*/
+exports.acknowledgeIncreaseReciept = async (req, res) => {
+  const { userdata } = req.body;
+
+  try {
+    const filter = { _id: userdata.increaseSavingsRequest._id };
+    const update = { acknowledged: "seen" };
+    await await IncreaseSavingDetail.findOneAndUpdate(filter, update, {
+      new: true,
+    });
+
+    sendReciept(
+      userdata.email,
+      userdata.name,
+      userdata.increaseSavingsRequest,
+      userdata.memberId
+    );
+    res.status(200).json({ message: "successful" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+/*@route POST 
+ @desc increase instruction receipt acknowledgement
+ @access private*/
+exports.acknowledgeDecreaseReciept = async (req, res) => {
+  const { userdata } = req.body;
+
+  try {
+    const filter = { _id: userdata.decreaseSavingsRequest._id };
+    const update = { acknowledged: "seen" };
+    await await DecreaseSavingDetail.findOneAndUpdate(filter, update, {
+      new: true,
+    });
+
+    sendReciept(
+      userdata.email,
+      userdata.name,
+      userdata.decreaseSavingsRequest,
+      userdata.memberId
+    );
+    res.status(200).json({ message: "successful" });
   } catch (err) {
     res
       .status(500)

@@ -16,6 +16,16 @@ router.post(
   auth,
   adminController.acknowledgeReciept
 );
+router.post(
+  "/API/acknowledgeincreasereciept",
+  auth,
+  adminController.acknowledgeIncreaseReciept
+);
+router.post(
+  "/API/acknowledgedecreasereciept",
+  auth,
+  adminController.acknowledgeDecreaseReciept
+);
 router.post("/API/declinereciept", auth, adminController.declineReciept);
 router.post(
   "/API/updateprofile",

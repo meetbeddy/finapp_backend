@@ -10,6 +10,8 @@ router.post("/API/signup", multerUploads, authController.signUp);
 router.post("/API/forgotpassword", authController.forgotPassword);
 router.get("/getuser/:id", auth, authController.getUser);
 router.post("/API/initialsaving", auth, userControllers.initialSavings);
+router.post("/API/increasesaving", auth, userControllers.increaseSavings);
+router.post("/API/decreasesaving", auth, userControllers.decreaseSavings);
 router.get("./sendemailconfirmation/:id", authController.sendEmailConfirmation);
 router.get("/emailconfirmation/:confirmationcode", authController.verifyEmail);
 router.get("/API/checklink/:token", authController.checkResetLink);
