@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
-mongoose.Promise = global.Promise;
 const { Schema } = mongoose;
 
-const referalSchema = new Schema({
+const ReferalSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
     ref: "User",
@@ -13,7 +12,7 @@ const referalSchema = new Schema({
       ref: "User",
     },
   ],
-  username: { type: String, required: true, unique: true },
+  username: { type: String },
 });
 
-module.exports = mongoose.model("Referal", referalSchema);
+module.exports = mongoose.model("Referal", ReferalSchema);

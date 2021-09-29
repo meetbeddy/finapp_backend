@@ -1,31 +1,28 @@
 const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
 const User = require("../models/User");
+const Referal = require("../models/Referal");
 const InitialSavingDetail = require("../models/InitialSavingDetail");
 const IncreaseSavingDetail = require("../models/IncreaseSavingDetail");
 const DecreaseSavingDetail = require("../models/DecreaseSavingDetail");
-const Referal = require("../models/Referal");
-const { findOne } = require("../models/User");
 
 exports.generateReferalink = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.user.email });
-
-    const memberId = user.memberId.slice(-6);
-    const name = user.name?.split(" ")[0];
-
-    const referal = await Referal.findOne({ userId: user._Id });
+    let memberId = user.memberId.slice(-6);
+    let name = user.name?.split(" ")[0];
+    const newId = `${name}-${memberId}`;
+    let referal = await Referal.findOne({ username: newId });
 
     if (!referal) {
-      referal = await new Referal({
-        userId: user._id,
-        referedUsers: "",
-        username: `${name}-${memberId}`,
-      }).save();
-    }
+      referal = await new Referal().save();
 
-    const link = `https://lmcsnigltd.org.ng/signup/?ref=${referal.username}`;
-    res.status(200).json({ link });
+      referal.userId = user._id;
+      referal.username = `${name}-${memberId}`;
+      referal.save();
+    }
+    let link = `https://lmcsnigltd.org.ng/signup/?ref=${referal.username}`;
+    return res.status(200).json({ message: link });
   } catch (err) {
     res
       .status(500)

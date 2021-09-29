@@ -113,7 +113,11 @@ exports.signUp = async (req, res) => {
 handleReferer = async (req, newuser) => {
   const id = newuser._id;
 
-  const referal = await Referal.findOne({ userId: req.body.referalId });
+  const ref = await User.findOne({ _id: req.body.refererId });
+  let memberId = ref.memberId.slice(-6);
+  let name = ref.name?.split(" ")[0];
+  const newId = `${name}-${memberId}`;
+  const referal = await Referal.findOne({ username: newId });
   const referedUser = referal.referedUsers;
 
   referedUser.push(id);
