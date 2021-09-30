@@ -12,8 +12,17 @@ const InitialSaving = require("../models/InitialSavingDetail");
 const sendInvite = require("../services/mailgun").adminInvite;
 const sendReciept = require("../services/mailgun").recieptAcknowledgement;
 const addToList = require("../services/mailgun").addMemberToMailList;
-const createList = require("../services/mailgun").createMailingList;
+const messageAll = require("../services/mailgun").messageAll;
 
+exports.messageAll = async (req, res) => {
+  try {
+    messageAll(req.body.subject, req.body.message);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
 /*@route GET 
  @desc confirm user
  @access private*/
