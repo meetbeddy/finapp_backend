@@ -11,6 +11,8 @@ const sendEmail = require("../services/mailgun").memberConfirmation;
 const InitialSaving = require("../models/InitialSavingDetail");
 const sendInvite = require("../services/mailgun").adminInvite;
 const sendReciept = require("../services/mailgun").recieptAcknowledgement;
+const addToList = require("../services/mailgun").addMemberToMailList;
+const createList = require("../services/mailgun").createMailingList;
 
 /*@route GET 
  @desc confirm user
@@ -51,6 +53,14 @@ exports.confirmUser = async (req, res) => {
     user.confirmedBy = req.user.name;
     user.memberId = generatedMemberId;
     user.save();
+    const person = {
+      name: user.name,
+      subscribed: true,
+      address: user.email,
+    };
+    addToList.members().create(person, function (error, data) {
+      console.log(data);
+    });
     sendEmail(user.email, user.name, user.memberId);
     res.status(200).json({ message: "user confirmed successfully" });
   } catch (err) {

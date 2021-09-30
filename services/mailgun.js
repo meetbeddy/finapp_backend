@@ -1,6 +1,21 @@
 const emailConfig = require("../configs/mailgunConfig")();
 const mailgun = require("mailgun-js")(emailConfig);
 
+// exports.addMemberToMailList = mailgun.lists(
+//   `LMCSMEMBERS@${emailConfig.domain}`
+// );
+
+// exports.createMailingList = mailgun.post(
+//   "/lists",
+//   {
+//     address: `LMCSMEMBERS@${emailConfig.domain}`,
+//     description: "all members of lmcs",
+//   },
+//   function (error, body) {
+//     console.log(body);
+//   }
+// );
+
 exports.recieptAcknowledgement = (recipient, name, detail, memberid) => {
   const data = {
     from: "LMCS Nig. Ltd. <noreply@lmcsnigltd.org.ng>",
