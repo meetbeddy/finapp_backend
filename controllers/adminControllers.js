@@ -7,6 +7,7 @@ const IncreaseSavingDetail = require("../models/IncreaseSavingDetail");
 const DecreaseSavingDetail = require("../models/DecreaseSavingDetail");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Referal = require("../models/Referal");
 const sendEmail = require("../services/mailgun").memberConfirmation;
 const InitialSaving = require("../models/InitialSavingDetail");
 const sendInvite = require("../services/mailgun").adminInvite;
@@ -14,6 +15,27 @@ const sendReciept = require("../services/mailgun").recieptAcknowledgement;
 const addToList = require("../services/mailgun").addMemberToMailList;
 const messageAll = require("../services/mailgun").messageAll;
 
+exports.getReferrals = async (req, res) => {
+  try {
+    const referrals = await Referal.find()
+      .populate({
+        path: " userId",
+        model: "User",
+      })
+      .populate([
+        {
+          path: "referedUsers",
+          model: "User",
+        },
+      ]);
+
+    res.status(200).json({ referrals });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
 exports.messageAll = async (req, res) => {
   try {
     messageAll(req.body.subject, req.body.message);
