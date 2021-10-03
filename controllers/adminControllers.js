@@ -13,7 +13,7 @@ const InitialSaving = require("../models/InitialSavingDetail");
 const sendInvite = require("../services/mailgun").adminInvite;
 const sendReciept = require("../services/mailgun").recieptAcknowledgement;
 const addToList = require("../services/mailgun").addMemberToMailList;
-const messageAll = require("../services/mailgun").messageAll;
+const messageAll = require("../services/mailgun").messageAllMembers;
 
 exports.getReferrals = async (req, res) => {
   try {
@@ -39,6 +39,7 @@ exports.getReferrals = async (req, res) => {
 exports.messageAll = async (req, res) => {
   try {
     messageAll(req.body.subject, req.body.message);
+    res.status(200).json({ message: "sent successfully" });
   } catch (err) {
     res
       .status(500)
