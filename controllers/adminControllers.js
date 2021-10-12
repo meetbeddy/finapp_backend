@@ -113,11 +113,37 @@ exports.FetchMembers = async (req, res) => {
         confirmed: true,
       },
       { _id: 0, name: 1, memberId: 1, email: 1, phone: 1, birthDate: 1 }
-    );
+    )
+      .lean()
+      .populate({
+        path: "employmentDetails",
+        model: "EmploymentDetail",
+        select: { _id: 0, ippisNum: 1, staffNum: 1 },
+      });
 
-    res.json(users);
+    let data = [];
+    let flattenObj = (obj) => {
+      let result = {};
+      for (const i in obj) {
+        if (typeof obj[i] === "object" && !Array.isArray(obj[i])) {
+          const temp = flattenObj(obj[i]);
+          for (const j in temp) {
+            result[j] = temp[j];
+          }
+        } else {
+          result[i] = obj[i];
+        }
+      }
+      return result;
+    };
+
+    users.forEach((user, index) => {
+      data.push(flattenObj(user));
+    });
+
+    res.json(data);
   } catch (err) {
-    res.status(500).json({ message: "something went wrong" });
+    res.status(500).json({ message: "something went wrong", err: err.message });
   }
 };
 
@@ -263,7 +289,7 @@ exports.acknowledgeReciept = async (req, res) => {
 exports.declineReciept = async (req, res) => {
   const { userdata } = req.body;
   try {
-    const filter = { _id: userddata.initialSavingsRequest._id };
+    const filter = { _id: userdata.initialSavingsRequest._id };
     const update = { acknowledged: "declined" };
     await InitialSaving.findOneAndUpdate(filter, update, { new: true });
     res.status(200).json({ message: "successfully declined" });
