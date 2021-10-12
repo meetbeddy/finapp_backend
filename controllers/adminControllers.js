@@ -119,6 +119,11 @@ exports.FetchMembers = async (req, res) => {
         path: "employmentDetails",
         model: "EmploymentDetail",
         select: { _id: 0, ippisNum: 1, staffNum: 1 },
+      })
+      .populate({
+        path: "paymentDetails",
+        model: "PaymentDetail",
+        select: { _id: 0 },
       });
 
     let data = [];
