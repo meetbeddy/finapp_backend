@@ -36,10 +36,12 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "IncreaseSaving",
   },
+
   decreaseSavingsRequest: {
     type: Schema.Types.ObjectId,
     ref: "DecreaseSaving",
   },
+
   category: { type: String, required: true },
   passport: { type: String, required: true },
   emailStatus: {

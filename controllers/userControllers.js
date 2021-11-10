@@ -5,6 +5,7 @@ const Referal = require("../models/Referal");
 const InitialSavingDetail = require("../models/InitialSavingDetail");
 const IncreaseSavingDetail = require("../models/IncreaseSavingDetail");
 const DecreaseSavingDetail = require("../models/DecreaseSavingDetail");
+const Commodity = require("../models/CommodityRequest");
 
 exports.generateReferalink = async (req, res) => {
   try {
@@ -238,6 +239,21 @@ exports.decreaseSavings = async (req, res) => {
 
     user.save();
     res.status(200).json({ message: "successfully sent " });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+exports.submitCommodity = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.user.email });
+    req.body.userId = user.memberId;
+
+    const request = await new Commodity(req.body).save();
+
+    res.status(200).json({ message: "submitted successfully", request });
   } catch (err) {
     res
       .status(500)

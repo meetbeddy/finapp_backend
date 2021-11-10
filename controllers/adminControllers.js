@@ -14,6 +14,8 @@ const sendInvite = require("../services/mailgun").adminInvite;
 const sendReciept = require("../services/mailgun").recieptAcknowledgement;
 const addToList = require("../services/mailgun").addMemberToMailList;
 const messageAll = require("../services/mailgun").messageAllMembers;
+const Product = require("../models/Products");
+const crypto = require("crypto");
 
 exports.getReferrals = async (req, res) => {
   try {
@@ -196,7 +198,7 @@ exports.FetchAllUsers = async (req, res) => {
         model: "EmploymentDetail",
       });
 
-    res.json(users);
+    res.status(200).json(users);
   } catch (err) {
     res
       .status(500)
@@ -371,4 +373,39 @@ generateMemberId = (lastid) => {
   let id = `LMCS/${month}/${year}/${sequence}`;
 
   return id;
+};
+
+exports.addProduct = async (req, res) => {
+  const { productName, variation, price, productImage, description } = req.body;
+
+  let d = new Date();
+  let time = d.getTime();
+  let id = crypto.randomBytes(20).toString("hex");
+  let productId = `${productName}-${id.slice(-6)}-${time}`;
+
+  let decodedVar = JSON.parse(variation);
+  let decodedPrice = JSON.parse(price);
+
+  try {
+    if (req.files?.productImage) {
+      const pass = multer.dataUri(req.files.productImage[0]).content;
+      let image = await cloudinary.uploader.upload(pass);
+      productImage = image.url;
+    }
+
+    const product = await new Product({
+      productName,
+      productId,
+      variations: decodedVar,
+      prices: decodedPrice,
+      description,
+      productImage,
+    }).save();
+
+    res.status(200).json({ message: "submitted successfully", product });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
 };

@@ -18,6 +18,7 @@ router.get("./sendemailconfirmation/:id", authController.sendEmailConfirmation);
 router.get("/emailconfirmation/:confirmationcode", authController.verifyEmail);
 router.get("/API/checklink/:token", authController.checkResetLink);
 router.post("/API/resetpassword", authController.resetPassword);
+router.post("/API/submitcommodity", auth, userControllers.submitCommodity);
 
 // router.post("/updateprofile", authController.updateUserProfile);
 

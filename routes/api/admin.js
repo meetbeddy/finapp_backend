@@ -34,5 +34,6 @@ router.post(
   multerUploads,
   authController.updateUserProfile
 );
+router.post("/API/addproduct", multerUploads, adminController.addProduct);
 
 module.exports = router;
