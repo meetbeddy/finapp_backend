@@ -16,6 +16,8 @@ const addToList = require("../services/mailgun").addMemberToMailList;
 const messageAll = require("../services/mailgun").messageAllMembers;
 const Product = require("../models/Products");
 const crypto = require("crypto");
+const multer = require("../middleware/multer");
+const cloudinary = require("cloudinary");
 
 exports.getReferrals = async (req, res) => {
   try {
@@ -387,10 +389,11 @@ exports.addProduct = async (req, res) => {
   let decodedPrice = JSON.parse(price);
 
   try {
-    if (req.files?.productImage) {
+    let imageUrl;
+    if (req.files) {
       const pass = multer.dataUri(req.files.productImage[0]).content;
       let image = await cloudinary.uploader.upload(pass);
-      productImage = image.url;
+      imageUrl = image.url;
     }
 
     const product = await new Product({
@@ -399,7 +402,7 @@ exports.addProduct = async (req, res) => {
       variations: decodedVar,
       prices: decodedPrice,
       description,
-      productImage,
+      productImage: imageUrl,
     }).save();
 
     res.status(200).json({ message: "submitted successfully", product });
@@ -410,11 +413,65 @@ exports.addProduct = async (req, res) => {
   }
 };
 
+exports.updateProduct = async (req, res) => {
+  const {
+    productName,
+    variation,
+    price,
+    description,
+    productId,
+    productStatus,
+  } = req.body;
+
+  const decodedVar = JSON.parse(variation);
+  const decodedPrice = JSON.parse(price);
+
+  try {
+    const product = await Product.findOne({ productId: productId });
+    if (!product) return res.status(400).json({ message: "product not found" });
+    console.log(product);
+    if (req.files.productImage) {
+      const pass = multer.dataUri(req.files.productImage[0]).content;
+      let image = await cloudinary.uploader.upload(pass);
+      product.productImage = image.url;
+    }
+    product.productStatus = productStatus;
+    product.variations = decodedVar;
+    product.decodedPrice = decodedPrice;
+    product.description = description;
+    product.productName = productName;
+
+    product.save();
+
+    res.status(200).json({ message: "submitted successfully", product });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
 exports.getProducts = async (req, res) => {
   try {
     const product = await Product.find();
 
     res.status(200).json(product);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+exports.removeProducts = async (req, res) => {
+  // const product = await Product.find();
+  const product = await Product.deleteMany({
+    _id: {
+      $in: [req.body.id],
+    },
+  });
+
+  try {
+    res.status(200).json({ message: "deleted successfully", product });
   } catch (err) {
     res
       .status(500)

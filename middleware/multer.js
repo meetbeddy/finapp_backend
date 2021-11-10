@@ -8,6 +8,7 @@ const storage = multer.memoryStorage();
 exports.multerUploads = multer({ storage }).fields([
   { name: "signature", maxCount: 1 },
   { name: "passport", maxCount: 1 },
+  { name: "productImage", maxCount: 1 },
 ]);
 
 const dUri = new DatauriParser();
