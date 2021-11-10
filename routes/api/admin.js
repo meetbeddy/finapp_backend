@@ -35,5 +35,6 @@ router.post(
   authController.updateUserProfile
 );
 router.post("/API/addproduct", multerUploads, adminController.addProduct);
+router.get("/API/getproducts", adminController.getProducts);
 
 module.exports = router;

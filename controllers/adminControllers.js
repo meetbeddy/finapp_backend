@@ -148,7 +148,7 @@ exports.FetchMembers = async (req, res) => {
       data.push(flattenObj(user));
     });
 
-    res.json(data);
+    res.status(200).json(data);
   } catch (err) {
     res.status(500).json({ message: "something went wrong", err: err.message });
   }
@@ -403,6 +403,18 @@ exports.addProduct = async (req, res) => {
     }).save();
 
     res.status(200).json({ message: "submitted successfully", product });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+exports.getProducts = async (req, res) => {
+  try {
+    const product = await Product.find();
+
+    res.status(200).json(product);
   } catch (err) {
     res
       .status(500)
