@@ -15,6 +15,7 @@ const sendReciept = require("../services/mailgun").recieptAcknowledgement;
 const addToList = require("../services/mailgun").addMemberToMailList;
 const messageAll = require("../services/mailgun").messageAllMembers;
 const Product = require("../models/Products");
+const CommodityReq = require("../models/CommodityRequest");
 const crypto = require("crypto");
 const multer = require("../middleware/multer");
 const cloudinary = require("cloudinary");
@@ -429,7 +430,7 @@ exports.updateProduct = async (req, res) => {
   try {
     const product = await Product.findOne({ productId: productId });
     if (!product) return res.status(400).json({ message: "product not found" });
-    console.log(product);
+
     if (req.files.productImage) {
       const pass = multer.dataUri(req.files.productImage[0]).content;
       let image = await cloudinary.uploader.upload(pass);
@@ -455,6 +456,17 @@ exports.getProducts = async (req, res) => {
     const product = await Product.find();
 
     res.status(200).json(product);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+exports.fetchCommodityRequests = async (req, res) => {
+  try {
+    const commodityRequests = await CommodityReq.find();
+    res.status(200).json(commodityRequests);
   } catch (err) {
     res
       .status(500)

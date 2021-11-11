@@ -38,5 +38,6 @@ router.post("/API/addproduct", multerUploads, adminController.addProduct);
 router.post("/API/updateproduct", multerUploads, adminController.updateProduct);
 router.get("/API/getproducts", adminController.getProducts);
 router.delete("/API/removeproducts", adminController.removeProducts);
+router.get("/API/commodityrequests", adminController.fetchCommodityRequests);
 
 module.exports = router;
