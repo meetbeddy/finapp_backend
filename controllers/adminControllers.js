@@ -436,13 +436,14 @@ exports.updateProduct = async (req, res) => {
       let image = await cloudinary.uploader.upload(pass);
       product.productImage = image.url;
     }
+
     product.productStatus = productStatus;
     product.variations = decodedVar;
-    product.decodedPrice = decodedPrice;
+    product.prices = decodedPrice;
     product.description = description;
     product.productName = productName;
 
-    product.save();
+    await product.save();
 
     res.status(200).json({ message: "submitted successfully", product });
   } catch (err) {
