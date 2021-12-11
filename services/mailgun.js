@@ -15,6 +15,7 @@ exports.addMemberToMailList = mailgun.lists(
 //     console.log(body);
 //   }
 // );
+
 exports.messageAllMembers = (subject, message) => {
   const data = {
     from: "LMCS Nig. Ltd. <noreply@lmcsnigltd.org.ng>",
