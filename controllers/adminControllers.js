@@ -43,46 +43,53 @@ exports.getReferrals = async (req, res) => {
   }
 };
 
-exports.messageAll = async (req, res) => {
-  const config = {
-    headers: {
-      Authorization: "Bearer 39|xxlL7Y9iQ4GcUIAooDqhrymkTcse88M5tjEzi5Ug",
+const getNumbers = async () => {
+  const users = await User.find(
+    {
+      confirmed: true,
     },
-  };
+    { _id: 0, phone: 1 }
+  ).lean();
+
+  const numbers = [];
+  let newString;
+  users.forEach((user) => {
+    if (user.phone.charAt(0) === "0") {
+      newString = parseInt(user.phone, 10);
+      let countryCode = "234";
+      numbers.push(Number(countryCode.concat(newString.toString())));
+    } else {
+      newString = parseInt(user.phone, 10);
+      numbers.push(newString);
+    }
+  });
+  return numbers.join();
+};
+exports.messageAll = async (req, res) => {
   try {
-    // const response = await axios.post(
-    //   "https://bulk.smsdepot.ng/api/v3/contacts/61b48861066a2/store",
-    //   { phone: "07064492675", first_name: "obed", last_name: "okpala" },
-    //   config
-    // );
+    let response;
 
-    const users = await User.find(
-      {
-        confirmed: true,
-      },
-      { _id: 0, phone: 1 }
-    ).lean();
+    const contacts = await getNumbers();
 
-    const numbers = [];
-    let newString;
-    users.forEach((user) => {
-      if (user.phone.charAt(0) === "0") {
-        newString = parseInt(user.phone, 10);
-        let countryCode = "234";
-        numbers.push(countryCode.concat(newString.toString()));
-      } else {
-        newString = parseInt(user.phone, 10);
-        numbers.push(newString.toString());
-      }
-    });
+    if (req.body.sendType === "sms") {
+      const contacts = getNumbers();
 
-    // console.log(numbers.join());
-    const response = await axios.get(
-      "http://api.ebulksms.com:8080/sendsms?username=katlybedrick@gmail.com&apikey=ba1c00bb9ba62eb548cd1851abcc36c570e4ed1b&sender=lmcs&messagetext=this is a test message&flash=0&recipients=2347064492675"
-    );
+      response = await axios.get(
+        `http://api.ebulksms.com:8080/sendsms?username=katlybedrick@gmail.com&apikey=ba1c00bb9ba62eb548cd1851abcc36c570e4ed1b&sender=LMCS&messagetext=${req.body.message}&flash=0&recipients=${contacts}`
+      );
+    } else if (req.body.sendType === "email") {
+      messageAll(req.body.subject, req.body.message);
+    } else if (req.body.sendType === "both") {
+      const contacts = getNumbers();
+      response = await axios.get(
+        `http://api.ebulksms.com:8080/sendsms?username=katlybedrick@gmail.com&apikey=ba1c00bb9ba62eb548cd1851abcc36c570e4ed1b&sender=LMCS&messagetext=${req.body.message}&flash=0&recipients=${contacts}`
+      );
+
+      messageAll(req.body.subject, req.body.message);
+    }
+
     console.log(response);
-    // messageAll(req.body.subject, req.body.message);
-    res.status(200).json({ message: "sent successfully", users, numbers });
+    res.status(200).json({ message: "sent successfully", response });
   } catch (err) {
     res
       .status(500)
