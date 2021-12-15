@@ -72,15 +72,12 @@ exports.messageAll = async (req, res) => {
     const contacts = await getNumbers();
 
     if (req.body.sendType === "sms") {
-      const contacts = getNumbers();
-
       response = await axios.get(
         `http://api.ebulksms.com:8080/sendsms?username=katlybedrick@gmail.com&apikey=ba1c00bb9ba62eb548cd1851abcc36c570e4ed1b&sender=LMCS&messagetext=${req.body.message}&flash=0&recipients=${contacts}`
       );
     } else if (req.body.sendType === "email") {
       messageAll(req.body.subject, req.body.message);
     } else if (req.body.sendType === "both") {
-      const contacts = getNumbers();
       response = await axios.get(
         `http://api.ebulksms.com:8080/sendsms?username=katlybedrick@gmail.com&apikey=ba1c00bb9ba62eb548cd1851abcc36c570e4ed1b&sender=LMCS&messagetext=${req.body.message}&flash=0&recipients=${contacts}`
       );
@@ -89,7 +86,7 @@ exports.messageAll = async (req, res) => {
     }
 
     console.log(response);
-    res.status(200).json({ message: "sent successfully", response });
+    res.status(200).json({ message: "sent successfully" });
   } catch (err) {
     res
       .status(500)
@@ -530,6 +527,22 @@ exports.removeProducts = async (req, res) => {
 
   try {
     res.status(200).json({ message: "deleted successfully", product });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+exports.removeCommodityReq = async (req, res) => {
+  const commodityReq = await CommodityReq.deleteMany({
+    _id: {
+      $in: [req.body.id],
+    },
+  });
+
+  try {
+    res.status(200).json({ message: "deleted successfully", commodityReq });
   } catch (err) {
     res
       .status(500)
