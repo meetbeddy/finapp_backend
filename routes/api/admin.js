@@ -9,7 +9,6 @@ router.get("/API/confirm/:id", auth, adminController.confirmUser);
 router.post("/API/createadmin", auth, adminController.CreateModerator);
 router.post("/API/login", adminController.AdminLogin);
 router.post("/API/sendemail", auth, adminController.messageAll);
-router.get("/API/sendemail", adminController.messageAll);
 router.get("/API/getmembers", adminController.FetchMembers);
 router.get("/API/getreferals", adminController.getReferrals);
 router.get("/API/getallusers", auth, adminController.FetchAllUsers);
