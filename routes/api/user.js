@@ -19,6 +19,8 @@ router.get("/emailconfirmation/:confirmationcode", authController.verifyEmail);
 router.get("/API/checklink/:token", authController.checkResetLink);
 router.post("/API/resetpassword", authController.resetPassword);
 router.post("/API/submitcommodity", auth, userControllers.submitCommodity);
+router.post("/API/loanrequest", auth, userControllers.loanRequest);
+router.post("/API/submitguarantor", userControllers.guarantorFormSubmit);
 
 // router.post("/updateprofile", authController.updateUserProfile);
 

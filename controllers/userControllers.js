@@ -1,11 +1,14 @@
 const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
+const uniqueid = require("uniqid");
 const User = require("../models/User");
 const Referal = require("../models/Referal");
 const InitialSavingDetail = require("../models/InitialSavingDetail");
 const IncreaseSavingDetail = require("../models/IncreaseSavingDetail");
 const DecreaseSavingDetail = require("../models/DecreaseSavingDetail");
 const Commodity = require("../models/CommodityRequest");
+const Loan = require("../models/LoanRequest");
+const loanReq = require("../services/mailgun").loanRequest;
 
 exports.generateReferalink = async (req, res) => {
   try {
@@ -238,6 +241,56 @@ exports.decreaseSavings = async (req, res) => {
     user.decreaseSavingsRequest = decreaseSavingRequest._id;
 
     user.save();
+    res.status(200).json({ message: "successfully sent " });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+exports.loanRequest = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.user.email });
+    transactionId = uniqueid("loan-").toUpperCase();
+    req.body.userId = user.memberId;
+    req.body.transactionId = transactionId;
+
+    const request = await new Loan(req.body).save();
+
+    let link = `https://lmcsnigltd.org.ng/guarantor-form/?loanid=${transactionId}`;
+
+    //send email
+    loanReq(
+      user.email,
+      user.name,
+      user.memberId,
+      request.amount,
+      transactionId,
+      link
+    );
+
+    res.status(200).json({ message: "successfully sent " });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+exports.guarantorFormSubmit = async (req, res) => {
+  try {
+    const loan = await Loan.findOne({ transactionId: req.body.transactionId });
+
+    const guarantor = loan.guarantors;
+
+    if (guarantor.length === 2) {
+      guarantor.shift();
+    }
+
+    guarantor.push(req.body.guarantor);
+    loan.guarantors = guarantor;
+    loan.save();
     res.status(200).json({ message: "successfully sent " });
   } catch (err) {
     res
