@@ -21,6 +21,7 @@ router.post("/API/resetpassword", authController.resetPassword);
 router.post("/API/submitcommodity", auth, userControllers.submitCommodity);
 router.post("/API/loanrequest", auth, userControllers.loanRequest);
 router.post("/API/submitguarantor", userControllers.guarantorFormSubmit);
+router.get("/API/fetchloanee/:id", userControllers.getLoanee);
 
 // router.post("/updateprofile", authController.updateUserProfile);
 

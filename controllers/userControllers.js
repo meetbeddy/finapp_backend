@@ -258,6 +258,9 @@ exports.loanRequest = async (req, res) => {
 
     const request = await new Loan(req.body).save();
 
+    request.userDetails = user._id;
+    request.save();
+
     let link = `https://lmcsnigltd.org.ng/guarantor-form/?loanid=${transactionId}`;
 
     //send email
@@ -280,7 +283,7 @@ exports.loanRequest = async (req, res) => {
 
 exports.guarantorFormSubmit = async (req, res) => {
   try {
-    const loan = await Loan.findOne({ transactionId: req.body.transactionId });
+    const loan = await Loan.findOne({ transactionId: req.body.loanId });
 
     const guarantor = loan.guarantors;
 
@@ -288,10 +291,40 @@ exports.guarantorFormSubmit = async (req, res) => {
       guarantor.shift();
     }
 
-    guarantor.push(req.body.guarantor);
+    guarantor.push(req.body);
     loan.guarantors = guarantor;
-    loan.save();
+    await loan.save();
     res.status(200).json({ message: "successfully sent " });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+exports.getLoanee = async (req, res) => {
+  try {
+    const loan = await Loan.findOne(
+      { transactionId: req.params.id },
+      { _id: 0 }
+    ).populate({
+      path: "loaneeDetails",
+      model: "User",
+      populate: { path: "employmentDetails", model: "EmploymentDetail" },
+      select: {
+        _id: 0,
+        emailStatus: 0,
+        increaseSavingsRequest: 0,
+        initialSavingsRequest: 0,
+        paymentDetails: 0,
+        password: 0,
+        confirmationCode: 0,
+        accessLevel: 0,
+        birthDate: 0,
+      },
+    });
+
+    res.status(200).json(loan);
   } catch (err) {
     res
       .status(500)

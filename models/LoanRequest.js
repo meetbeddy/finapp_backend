@@ -4,6 +4,10 @@ const { Schema } = mongoose;
 const loanRequestSchema = new Schema(
   {
     userId: { type: String, required: true },
+    loaneeDetails: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
     transactionId: { type: String, required: true },
     amount: { type: Number, required: true },
     loanType: { type: String, required: true },
