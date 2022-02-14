@@ -18,7 +18,7 @@ exports.addMemberToMailList = mailgun.lists(
 
 exports.messageAllMembers = (subject, message) => {
   const data = {
-    from: "LMCS Nig. Ltd. <noreply@lmcsnigltd.org.ng>",
+    from: "LMCS Nig. Ltd. <lmcsnigltd@gmail.com>",
     to: "lmcsmembers@lmcsnigltd.org.ng",
     subject: subject,
     text: message,
@@ -739,7 +739,7 @@ exports.messageAllMembers = (subject, message) => {
 
 exports.recieptAcknowledgement = (recipient, name, detail, memberid) => {
   const data = {
-    from: "LMCS Nig. Ltd. <noreply@lmcsnigltd.org.ng>",
+    from: "LMCS Nig. Ltd. <lmcsnigltd@gmail.com>",
     to: recipient,
     subject: "Instruction Recieved",
     html: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -1516,7 +1516,7 @@ exports.recieptAcknowledgement = (recipient, name, detail, memberid) => {
 
 exports.adminInvite = (recipient, name, password) => {
   const data = {
-    from: "LMCS Nig. Ltd. <noreply@lmcsnigltd.org.ng>",
+    from: "LMCS Nig. Ltd. <lmcsnigltd@gmail.com>",
     to: recipient,
     subject: "Verify your email address",
     html: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -2251,7 +2251,7 @@ exports.emailConfirmation = (recipient, name, token) => {
   const url = `https://stark-depths-01637.herokuapp.com/user/emailconfirmation/${token}`;
 
   const data = {
-    from: "LMCS Nig. Ltd. <noreply@lmcsnigltd.org.ng>",
+    from: "LMCS Nig. Ltd. <lmcsnigltd@gmail.com>",
     to: recipient,
     subject: "Verify your email address",
     html: `<body
@@ -2632,7 +2632,7 @@ exports.emailConfirmation = (recipient, name, token) => {
 
 exports.memberConfirmation = (recipient, name, memberid) => {
   const data = {
-    from: "LMCS Nig. Ltd. <noreply@lmcsnigltd.org.ng>",
+    from: "LMCS Nig. Ltd. <lmcsnigltd@gmail.com>",
     to: recipient,
     subject: "payment confirmation",
     html: `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -3366,7 +3366,7 @@ exports.memberConfirmation = (recipient, name, memberid) => {
 
 exports.passwordResetLink = (recipient, link) => {
   const data = {
-    from: "LMCS Nig. Ltd. <noreply@lmcsnigltd.org.ng>",
+    from: "LMCS Nig. Ltd. <lmcsnigltd@gmail.com>",
     to: recipient,
     subject: "password reset link",
     html: `
@@ -4131,7 +4131,7 @@ exports.loanRequest = (
   link
 ) => {
   const data = {
-    from: "LMCS Nig. Ltd. <noreply@lmcsnigltd.org.ng>",
+    from: "LMCS Nig. Ltd. <lmcsnigltd@gmail.com>",
     to: recipient,
     subject: "Loan Request Recieved",
     html: `
