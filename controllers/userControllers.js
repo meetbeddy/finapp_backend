@@ -259,7 +259,7 @@ exports.loanRequest = async (req, res) => {
     const request = await new Loan(req.body).save();
 
     request.loaneeDetails = user._id;
-    request.save();
+    await request.save();
 
     let link = `https://lmcsnigltd.org.ng/guarantor-form/?loanid=${transactionId}`;
 
