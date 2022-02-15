@@ -39,6 +39,13 @@ router.post("/API/updateproduct", multerUploads, adminController.updateProduct);
 router.get("/API/getproducts", adminController.getProducts);
 router.delete("/API/removeproducts", adminController.removeProducts);
 router.delete("/API/removerequest", adminController.removeCommodityReq);
-router.get("/API/commodityrequests", adminController.fetchCommodityRequests);
+router.get(
+  "/API/commodityrequests",
+  auth,
+  adminController.fetchCommodityRequests
+);
+router.get("/API/loanrequest", auth, adminController.fetchLoanRequests);
+router.post("/API/acceptloanreq", auth, adminController.acknowledgeLoanReq);
+router.post("/API/rejectloanreq", auth, adminController.declineLoanReq);
 
 module.exports = router;

@@ -21,6 +21,8 @@ const loanRequestSchema = new Schema(
     christmasSavings: String,
     educationSavings: String,
     loanBalance: String,
+    isIndebted: String,
+    interestRate: { type: Number, required: true },
     payable: { type: String, required: true },
     proRata: { type: String, required: true },
     guarantors: [],

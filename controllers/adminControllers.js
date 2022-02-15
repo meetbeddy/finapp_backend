@@ -16,6 +16,7 @@ const addToList = require("../services/mailgun").addMemberToMailList;
 const messageAll = require("../services/mailgun").messageAllMembers;
 const Product = require("../models/Products");
 const CommodityReq = require("../models/CommodityRequest");
+const LoanReq = require("../models/LoanRequest");
 const crypto = require("crypto");
 const multer = require("../middleware/multer");
 const cloudinary = require("cloudinary");
@@ -361,7 +362,7 @@ exports.acknowledgeIncreaseReciept = async (req, res) => {
   try {
     const filter = { _id: userdata.increaseSavingsRequest._id };
     const update = { acknowledged: "seen" };
-    await await IncreaseSavingDetail.findOneAndUpdate(filter, update, {
+    await IncreaseSavingDetail.findOneAndUpdate(filter, update, {
       new: true,
     });
 
@@ -543,6 +544,80 @@ exports.removeCommodityReq = async (req, res) => {
 
   try {
     res.status(200).json({ message: "deleted successfully", commodityReq });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+exports.fetchLoanRequests = async (req, res) => {
+  try {
+    const loanRequests = await LoanReq.find().populate({
+      path: "loaneeDetails",
+      model: "User",
+      populate: { path: "employmentDetails", model: "EmploymentDetail" },
+      select: {
+        _id: 0,
+        emailStatus: 0,
+        increaseSavingsRequest: 0,
+        initialSavingsRequest: 0,
+        paymentDetails: 0,
+        password: 0,
+        confirmationCode: 0,
+        accessLevel: 0,
+        birthDate: 0,
+      },
+    });
+    res.status(200).json(loanRequests);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+exports.acknowledgeLoanReq = async (req, res) => {
+  const { transactionId } = req.body;
+
+  try {
+    const filter = { transactionId: transactionId };
+    const update = { acknowledged: "seen" };
+    await LoanReq.findOneAndUpdate(filter, update, {
+      new: true,
+    });
+
+    // sendReciept(
+    //   userdata.email,
+    //   userdata.name,
+    //   userdata.decreaseSavingsRequest,
+    //   userdata.memberId
+    // );
+    res.status(200).json({ message: "successful" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+exports.declineLoanReq = async (req, res) => {
+  const { userdata } = req.body;
+
+  try {
+    const filter = { transactionId: userdata.transactionId };
+    const update = { acknowledged: "declined" };
+    await LoanReq.findOneAndUpdate(filter, update, {
+      new: true,
+    });
+
+    // sendReciept(
+    //   userdata.email,
+    //   userdata.name,
+    //   userdata.decreaseSavingsRequest,
+    //   userdata.memberId
+    // );
+    res.status(200).json({ message: "successful" });
   } catch (err) {
     res
       .status(500)
