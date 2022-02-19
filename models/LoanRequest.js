@@ -22,7 +22,7 @@ const loanRequestSchema = new Schema(
     educationSavings: String,
     loanBalance: String,
     isIndebted: String,
-    interestRate: { type: Number, required: true },
+    interestRate: { type: Number },
     payable: { type: String, required: true },
     proRata: { type: String, required: true },
     guarantors: [],
