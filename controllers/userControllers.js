@@ -281,6 +281,18 @@ exports.loanRequest = async (req, res) => {
   }
 };
 
+exports.getMyLoans = async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.user.email });
+    const loanRequests = await Loan.find({ userId: user.memberId });
+    res.status(200).json(loanRequests);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
 exports.guarantorFormSubmit = async (req, res) => {
   try {
     const loan = await Loan.findOne({ transactionId: req.body.loanId });
