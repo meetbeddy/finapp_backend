@@ -94,6 +94,22 @@ exports.messageAll = async (req, res) => {
       .json({ message: "something went wrong", error: err.message });
   }
 };
+
+exports.removeUser = async (req, res) => {
+  const user = await User.deleteMany({
+    _id: {
+      $in: [req.body.id],
+    },
+  });
+
+  try {
+    res.status(200).json({ message: "deleted successfully", user });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
 /*@route GET 
  @desc confirm user
  @access private*/
@@ -138,9 +154,7 @@ exports.confirmUser = async (req, res) => {
       subscribed: true,
       address: user.email,
     };
-    addToList.members().create(person, function (error, data) {
-      console.log(data);
-    });
+    addToList.members().create(person, function (error, data) {});
     sendEmail(user.email, user.name, user.memberId);
     res.status(200).json({ message: "user confirmed successfully" });
   } catch (err) {
