@@ -86,7 +86,6 @@ exports.messageAll = async (req, res) => {
       messageAll(req.body.subject, req.body.message);
     }
 
-    console.log(response);
     res.status(200).json({ message: "sent successfully" });
   } catch (err) {
     res
@@ -96,6 +95,7 @@ exports.messageAll = async (req, res) => {
 };
 
 exports.removeUser = async (req, res) => {
+  // const product = await Product.find();
   const user = await User.deleteMany({
     _id: {
       $in: [req.body.id],
@@ -597,6 +597,11 @@ exports.acknowledgeLoanReq = async (req, res) => {
   try {
     const filter = { transactionId: transactionId };
     const update = { acknowledged: "seen" };
+    const loanRequest = LoanReq.findOne(filter);
+
+    if (loanRequest.guarantors.length === 0)
+      return res.status(401).json({ message: "failed, no guarantor found" });
+
     await LoanReq.findOneAndUpdate(filter, update, {
       new: true,
     });
@@ -616,10 +621,8 @@ exports.acknowledgeLoanReq = async (req, res) => {
 };
 
 exports.declineLoanReq = async (req, res) => {
-  const { userdata } = req.body;
-
   try {
-    const filter = { transactionId: userdata.transactionId };
+    const filter = { _id: req.body.id };
     const update = { acknowledged: "declined" };
     await LoanReq.findOneAndUpdate(filter, update, {
       new: true,
