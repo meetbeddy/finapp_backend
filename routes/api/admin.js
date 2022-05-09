@@ -6,7 +6,7 @@ const auth = require("../../middleware/Auth");
 const multerUploads = require("../../middleware/multer").multerUploads;
 
 router.get("/API/confirm/:id", auth, adminController.confirmUser);
-router.delete("/API/deleteuser", auth, adminController.removeUser);
+router.delete("/API/deleteuser", adminController.removeUser);
 router.post("/API/createadmin", auth, adminController.CreateModerator);
 router.post("/API/login", adminController.AdminLogin);
 router.post("/API/sendemail", auth, adminController.messageAll);
