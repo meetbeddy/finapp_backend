@@ -15,6 +15,8 @@ const loanRequestSchema = new Schema(
     bankName: { type: String, required: true },
     accountName: { type: String, required: true },
     accountNumber: { type: String, required: true },
+    gross_Salary: { type: String, required: true },
+    netSalary: { type: String, required: true },
     shareCapital: { type: String, required: true },
     ordinarySavings: { type: String, required: true },
     retirementSavings: String,
