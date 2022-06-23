@@ -38,7 +38,10 @@ exports.signIn = async (req, res) => {
         email: existingUser.email,
         accessLevel: existingUser.accessLevel,
       },
-      process.env.TOKEN_SECRET
+      process.env.TOKEN_SECRET,
+      {
+        expiresIn: "2h",
+      }
     );
     res.status(200).json({ user: existingUser, token });
   } catch (error) {
