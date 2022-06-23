@@ -7,6 +7,7 @@ const auth = require("../../middleware/Auth");
 
 router.post("/API/signin", authController.signIn);
 router.post("/API/signup", multerUploads, authController.signUp);
+router.post("/API/editprofile", authController.editProfile);
 router.post("/API/forgotpassword", authController.forgotPassword);
 router.get("/getuser/:id", auth, authController.getUser);
 router.get("/API/referal-link", auth, userControllers.generateReferalink);

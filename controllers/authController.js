@@ -3,6 +3,7 @@ mongoose.Promise = global.Promise;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Nok = require("../models/Nok");
 const EmploymentDetail = require("../models/EmploymentDetail");
 const PaymentDetail = require("../models/PaymentDetail");
 const Token = require("../models/Token");
@@ -214,10 +215,17 @@ exports.getUser = async (req, res) => {
       .populate({
         path: "initialSavingsRequest",
         model: "InitialSaving",
+        select: { _id: 0 },
       })
       .populate({
         path: "employmentDetails",
         model: "EmploymentDetail",
+        select: { _id: 0 },
+      })
+      .populate({
+        path: "nok",
+        model: "Nok",
+        select: { _id: 0 },
       });
     if (!user) return res.status(404).json({ message: "user does not exist" });
     res.status(200).json({ user });
@@ -398,6 +406,30 @@ exports.updateUserProfile = async (req, res) => {
     user.save();
     employmentDetails.save();
 
+    res.status(200).json({ message: "profile updated successfully" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "something went wrong", error: err.message });
+  }
+};
+
+exports.editProfile = async (req, res) => {
+  const { id } = req.body;
+  try {
+    let nok;
+    const user = await User.findById(id);
+
+    if (user.nok) {
+      let update = req.body;
+      nok = await Nok.findByIdAndUpdate(user.nok, update, {
+        new: true,
+      });
+    } else {
+      nok = await new Nok(req.body).save();
+      user.nok = nok._id;
+      await user.save();
+    }
     res.status(200).json({ message: "profile updated successfully" });
   } catch (err) {
     res

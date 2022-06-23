@@ -41,7 +41,10 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "DecreaseSaving",
   },
-
+  nok: {
+    type: Schema.Types.ObjectId,
+    ref: "Nok",
+  },
   category: { type: String, required: true },
   passport: { type: String, required: true },
   emailStatus: {
