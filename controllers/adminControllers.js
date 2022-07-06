@@ -186,11 +186,6 @@ exports.FetchMembers = async (req, res) => {
         path: "paymentDetails",
         model: "PaymentDetail",
         select: { _id: 0 },
-      })
-      .populate({
-        path: "nok",
-        model: "Nok",
-        select: { _id: 0 },
       });
 
     let data = [];
@@ -261,6 +256,10 @@ exports.FetchAllUsers = async (req, res) => {
       .populate({
         path: "employmentDetails",
         model: "EmploymentDetail",
+      })
+      .populate({
+        path: "nok",
+        model: "Nok",
       });
 
     res.status(200).json(users);
@@ -326,7 +325,10 @@ exports.AdminLogin = async (req, res) => {
         id: existingUser._id,
         accessLevel: existingUser.accessLevel,
       },
-      process.env.TOKEN_SECRET
+      process.env.TOKEN_SECRET,
+      {
+        expiresIn: "2h",
+      }
     );
     res.status(200).json({ user: existingUser, token });
   } catch (err) {

@@ -228,8 +228,8 @@ exports.getUser = async (req, res) => {
       .populate({
         path: "nok",
         model: "Nok",
-        select: { _id: 0 },
       });
+
     if (!user) return res.status(404).json({ message: "user does not exist" });
     res.status(200).json({ user });
   } catch (error) {
